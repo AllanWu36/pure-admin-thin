@@ -21,7 +21,9 @@ import "element-plus/dist/index.css";
 // 导入字体图标
 import "./assets/iconfont/iconfont.js";
 import "./assets/iconfont/iconfont.css";
-
+// 导入表格
+import "@pureadmin/table/dist/style.css";
+import PureTable from "@pureadmin/table";
 const app = createApp(App);
 
 // 自定义指令
@@ -50,6 +52,7 @@ getServerConfig(app).then(async config => {
   injectResponsiveStorage(app, config);
   setupStore(app);
   app.use(MotionPlugin).use(ElementPlus);
+  app.use(PureTable, { locale: "zhCn" });
   // .use(useEcharts);
   // .use(Table);
   // .use(PureDescriptions);
