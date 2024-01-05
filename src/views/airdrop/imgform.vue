@@ -3,7 +3,6 @@
 import { ref } from "vue";
 import Sortable, { Swap } from "sortablejs";
 import draggable from "vuedraggable/src/vuedraggable";
-import { ElDialog } from "element-plus";
 
 // 声明 props 类型
 export interface FormProps {
@@ -17,10 +16,41 @@ const props = withDefaults(defineProps<FormProps>(), {
   urlList: () => []
 });
 const lists = ref<Array<Object>>([
-  { people: "cn", id: 1, name: "www.itxst.com" },
-  { people: "cn", id: 2, name: "www.baidu.com" },
-  { people: "cn", id: 3, name: "www.taobao.com" },
-  { people: "cn", id: 4, name: "www.google.com" }
+  {
+    people: "cn",
+    id: 1,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  },
+  {
+    people: "cn",
+    id: 2,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  },
+  {
+    people: "cn",
+    id: 3,
+    name: "https://imagecdn.cqliving.com/images/app_29/cms/202305/6a71758d6b27cf9c2f854d0b0df826201d031cff.jpg?x-oss-process=image%2Fresize%2Cm_lfit%2Cw_720%2Ch_16384"
+  },
+  {
+    people: "cn",
+    id: 4,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  },
+  {
+    people: "cn",
+    id: 5,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  },
+  {
+    people: "cn",
+    id: 6,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  },
+  {
+    people: "cn",
+    id: 7,
+    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+  }
 ]);
 
 // const newUrlInline = ref(props.urlList);
@@ -42,12 +72,6 @@ const change = (evt): void => {
   console.log("evt: ", evt);
 };
 
-const previewImages = () => {
-  // 打开预览对话框
-  console.log(isPreviewVisible.value);
-  isPreviewVisible.value = true;
-};
-
 // // 使用 vueuse 的双向绑定工具
 // const emit = defineEmits(["update:data"]);
 // const data = useVModel(props, "urlList", emit);
@@ -55,63 +79,58 @@ const previewImages = () => {
 
 <template>
   <!-- 图片上传部分 -->
-  <div><input type="file" @change="onFileChange" multiple /></div>
-
-  <!-- 图片重新排序部分 -->
-  <div>
-    <el-card shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span>单列拖拽</span>
-        </div>
-      </template>
-      <draggable
-        v-model="lists"
-        item-key="name"
-        chosen-class="chosen"
-        force-fallback="true"
-        animation="300"
-        @change="change"
-      >
-        <template #item="{ element, index }">
-          <div class="item-single">{{ element.name }} {{ index }}</div>
-        </template>
-      </draggable>
-    </el-card>
+  <div class="bottom-2">
+    <input type="file" @change="onFileChange" multiple />
   </div>
-
-  <!-- 图片预览对话框 -->
-  <el-dialog v-model:visible="isPreviewVisible" title="图片预览">
-    <div v-for="(url, index) in newUrlInline" :key="index">
-      <img src="url" style="max-width: 100%; margin-bottom: 10px" />
+  <div class="flex">
+    <div class="w-1/2">
+      <!-- 图片预览对话框 -->
+      <div v-for="(url, index) in newUrlInline" :key="index">
+        <img :src="url.name" style="max-width: 100%; margin-bottom: 2px" />
+      </div>
     </div>
-  </el-dialog>
-
-  <!-- 预览按钮 -->
-  <button @click="previewImages">预览</button>
+    <div class="w-1/2">
+      <!-- 图片重新排序部分 -->
+      <div>
+        <el-card shadow="never">
+          <template #header>
+            <div class="card-header">
+              <span>拖拽排序</span>
+            </div>
+          </template>
+          <draggable
+            v-model="lists"
+            item-key="id"
+            chosen-class="chosen"
+            force-fallback="true"
+            animation="300"
+            @change="change"
+          >
+            <template #item="{ element, index }">
+              <div class="item-single">{{ index }}:{{ element.id }}</div>
+            </template>
+          </draggable>
+        </el-card>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
 /* grid列表拖拽 */
-.grid-container {
-  display: grid;
-  grid-template-rows: 33.3% 33.3% 33.3%;
-  grid-template-columns: 33.3% 33.3% 33.3%;
-}
-
 .item-single {
-  height: 77px;
-  font-size: 1.5em;
-  line-height: 85px;
+  height: 37px;
+  font-size: 1em;
+  line-height: 45px;
   text-align: center;
   cursor: move;
   border: 1px solid #e5e4e9;
 }
 
 .item-cut {
-  height: 77px;
+  height: 37px;
   font-size: 1.5em;
-  line-height: 77px;
+  line-height: 37px;
   text-align: center;
   cursor: move;
   border: 1px solid #e5e4e9;
@@ -127,42 +146,6 @@ const previewImages = () => {
   @media screen and (width <= 750px) {
     line-height: 90px;
   }
-}
-
-.item-1 {
-  background-color: #ef342a;
-}
-
-.item-2 {
-  background-color: #f68f26;
-}
-
-.item-3 {
-  background-color: #4ba946;
-}
-
-.item-4 {
-  background-color: #0376c2;
-}
-
-.item-5 {
-  background-color: #c077af;
-}
-
-.item-6 {
-  background-color: #f8d29d;
-}
-
-.item-7 {
-  background-color: #b5a87f;
-}
-
-.item-8 {
-  background-color: #d0e4a9;
-}
-
-.item-9 {
-  background-color: #4dc7ec;
 }
 
 .chosen {
