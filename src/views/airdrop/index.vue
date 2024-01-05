@@ -36,7 +36,8 @@
 import { ref, reactive } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
-import forms, { type FormProps } from "./form.vue";
+// import forms, { type FormProps } from "./form.vue";
+import forms, { type FormProps } from "./imgform.vue";
 function handleClick(row) {
   console.log(
     "%crow===>>>: ",
@@ -51,17 +52,22 @@ function onFormOneClick(row) {
     width: "70%",
     title: "结合Form表单（第一种方式）",
     contentRenderer: () => forms,
+    // props: {
+    //   // 赋默认值
+    //   formInline: {
+    //     user: "菜虚鲲",
+    //     region: ""
+    //   }
+    // },
     props: {
       // 赋默认值
-      formInline: {
-        user: "菜虚鲲",
-        region: ""
-      }
+      urlList: ["1", "2"]
     },
     closeCallBack: ({ options, args }) => {
       // options.props 是响应式的
-      const { formInline } = options.props as FormProps;
-      const text = `姓名：${formInline.user} 城市：${formInline.region}`;
+      const { urlList } = options.props as FormProps;
+      // const text = `姓名：${formInline.user} 城市：${formInline.region}`;
+      console.log(urlList);
       if (args?.command === "cancel") {
         // 您点击了取消按钮
         // message(`您点击了取消按钮，当前表单数据为 ${text},id为${row}`);
