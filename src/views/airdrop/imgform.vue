@@ -1,8 +1,17 @@
 <script setup lang="ts">
 // import { useVModel } from "@vueuse/core";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import Sortable, { Swap } from "sortablejs";
 import draggable from "vuedraggable/src/vuedraggable";
+import { getImgs } from "@/api/collection";
+
+async function get_Imgs() {
+  const result = await getImgs({ id: "1" });
+  if (result.success) {
+    console.log(result.data);
+    return result.data;
+  }
+}
 
 // 声明 props 类型
 export interface FormProps {
@@ -15,46 +24,61 @@ export interface FormProps {
 const props = withDefaults(defineProps<FormProps>(), {
   urlList: () => []
 });
-const lists = ref<Array<Object>>([
-  {
-    people: "cn",
-    id: 1,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-  },
-  {
-    people: "cn",
-    id: 2,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-  },
-  {
-    people: "cn",
-    id: 3,
-    name: "https://imagecdn.cqliving.com/images/app_29/cms/202305/6a71758d6b27cf9c2f854d0b0df826201d031cff.jpg?x-oss-process=image%2Fresize%2Cm_lfit%2Cw_720%2Ch_16384"
-  },
-  {
-    people: "cn",
-    id: 4,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-  },
-  {
-    people: "cn",
-    id: 5,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-  },
-  {
-    people: "cn",
-    id: 6,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-  },
-  {
-    people: "cn",
-    id: 7,
-    name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+
+// const lists = ref<Array<Object>>([
+//   {
+//     people: "cn",
+//     id: 1,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   },
+//   {
+//     people: "cn",
+//     id: 2,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   },
+//   {
+//     people: "cn",
+//     id: 3,
+//     name: "https://imagecdn.cqliving.com/images/app_29/cms/202305/6a71758d6b27cf9c2f854d0b0df826201d031cff.jpg?x-oss-process=image%2Fresize%2Cm_lfit%2Cw_720%2Ch_16384"
+//   },
+//   {
+//     people: "cn",
+//     id: 4,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   },
+//   {
+//     people: "cn",
+//     id: 5,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   },
+//   {
+//     people: "cn",
+//     id: 6,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   },
+//   {
+//     people: "cn",
+//     id: 7,
+//     name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+//   }
+// ]);
+
+// const newUrlInline = ref(lists);
+// console.log(newUrlInline);
+const newUrlInline = ref([]);
+onMounted(async () => {
+  try {
+    const images = await get_Imgs();
+    if (images) {
+      newUrlInline.value = images.imgs;
+      console.log(newUrlInline);
+    }
+  } catch (error) {
+    console.error("Error fetching images:", error);
   }
-]);
+});
 
 // const newUrlInline = ref(props.urlList);
-const newUrlInline = ref(lists);
 
 const isPreviewVisible = ref(false); // 控制预览对话框的显示
 
@@ -99,7 +123,7 @@ const change = (evt): void => {
             </div>
           </template>
           <draggable
-            v-model="lists"
+            v-model="newUrlInline"
             item-key="id"
             chosen-class="chosen"
             force-fallback="true"
