@@ -36,6 +36,7 @@
 import { ref, reactive } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
+import { message } from "@/utils/message";
 // import forms, { type FormProps } from "./form.vue";
 import forms, { type FormProps } from "./imgform.vue";
 function handleClick(row) {
@@ -61,18 +62,21 @@ function onFormOneClick(row) {
     // },
     props: {
       // 赋默认值
-      urlList: ["1", "2"]
+      data: {
+        num: 0,
+        urlList: []
+      }
     },
     closeCallBack: ({ options, args }) => {
       // options.props 是响应式的
-      const { urlList } = options.props as FormProps;
+      const { data } = options.props as FormProps;
       // const text = `姓名：${formInline.user} 城市：${formInline.region}`;
-      console.log(urlList);
+      console.log(data.urlList);
       if (args?.command === "cancel") {
         // 您点击了取消按钮
-        // message(`您点击了取消按钮，当前表单数据为 ${text},id为${row}`);
+        message(`您点击了取消按钮，当前表单数据为 ${data.urlList},id为${row}`);
       } else if (args?.command === "sure") {
-        // message(`您点击了确定按钮，当前表单数据为 ${text}`);
+        message(`您点击了确定按钮，当前表单数据为 ${data.urlList}`);
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
       }

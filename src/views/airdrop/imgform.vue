@@ -3,7 +3,10 @@
 import { onMounted, ref } from "vue";
 import Sortable, { Swap } from "sortablejs";
 import draggable from "vuedraggable/src/vuedraggable";
-import { getImgs } from "@/api/collection";
+import { getImgs, img_item } from "@/api/collection";
+import { ElMessage, ElMessageBox } from "element-plus";
+
+import type { UploadProps, UploadUserFile } from "element-plus";
 
 async function get_Imgs() {
   const result = await getImgs({ id: "1" });
@@ -16,16 +19,18 @@ async function get_Imgs() {
 // 声明 props 类型
 export interface FormProps {
   // url 列表
-  urlList: string[];
+  data: {
+    num: number;
+    urlList: img_item[];
+  };
 }
 
 // 声明 props 默认值
 // 推荐阅读：https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
 const props = withDefaults(defineProps<FormProps>(), {
-  urlList: () => []
+  data: () => ({ num: 0, urlList: [] })
 });
 
-// const lists = ref<Array<Object>>([
 //   {
 //     people: "cn",
 //     id: 1,
@@ -65,20 +70,18 @@ const props = withDefaults(defineProps<FormProps>(), {
 
 // const newUrlInline = ref(lists);
 // console.log(newUrlInline);
-const newUrlInline = ref([]);
+const props_data = ref(props.data);
 onMounted(async () => {
   try {
     const images = await get_Imgs();
     if (images) {
-      newUrlInline.value = images.imgs;
-      console.log(newUrlInline);
+      props_data.value.urlList = images.imgs;
+      console.log(props_data.value.urlList);
     }
   } catch (error) {
     console.error("Error fetching images:", error);
   }
 });
-
-// const newUrlInline = ref(props.urlList);
 
 const isPreviewVisible = ref(false); // 控制预览对话框的显示
 
@@ -92,6 +95,14 @@ const onFileChange = async event => {
   }
 };
 
+const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
+  ElMessage.warning(
+    `不能超过7张图片, 本次你选择了 ${files.length} 个文件, 总共达到 ${
+      files.length + uploadFiles.length
+    } 文件了`
+  );
+};
+
 const change = (evt): void => {
   console.log("evt: ", evt);
 };
@@ -102,20 +113,34 @@ const change = (evt): void => {
 </script>
 
 <template>
-  <!-- 图片上传部分 -->
-  <div class="bottom-2">
-    <input type="file" @change="onFileChange" multiple />
-  </div>
   <div class="flex">
     <div class="w-1/2">
       <!-- 图片预览对话框 -->
-      <div v-for="(url, index) in newUrlInline" :key="index">
+      <div v-for="(url, index) in props_data.urlList" :key="index">
         <img :src="url.name" style="max-width: 100%; margin-bottom: 2px" />
       </div>
     </div>
     <div class="w-1/2">
+      <!-- 图片上传部分 -->
+      <div class="ml-3 mb-3">
+        <el-upload
+          v-model:file-list="props_data.urlList"
+          class="upload-demo"
+          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+          multiple
+          :limit="7"
+          :on-exceed="handleExceed"
+        >
+          <el-button type="primary">上传图片</el-button>
+          <template #tip>
+            <div class="el-upload__tip">
+              上传图片不超过10张，每张应该小于500KB.
+            </div>
+          </template>
+        </el-upload>
+      </div>
       <!-- 图片重新排序部分 -->
-      <div>
+      <div class="ml-3 mb-3">
         <el-card shadow="never">
           <template #header>
             <div class="card-header">
@@ -123,7 +148,7 @@ const change = (evt): void => {
             </div>
           </template>
           <draggable
-            v-model="newUrlInline"
+            v-model="props_data.urlList"
             item-key="id"
             chosen-class="chosen"
             force-fallback="true"
