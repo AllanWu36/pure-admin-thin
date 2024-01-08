@@ -95,6 +95,12 @@ const onFileChange = async event => {
   }
 };
 
+const handleUploadSuccess = (response, file, fileList) => {
+  console.log(response, file, fileList);
+  // 处理上传成功的逻辑
+  // props_data.value.urlList.push(response.data);
+};
+
 const handleExceed: UploadProps["onExceed"] = (files, uploadFiles) => {
   ElMessage.warning(
     `不能超过7张图片, 本次你选择了 ${files.length} 个文件, 总共达到 ${
@@ -130,6 +136,7 @@ const change = (evt): void => {
           multiple
           :limit="7"
           :on-exceed="handleExceed"
+          :on-success="handleUploadSuccess"
         >
           <el-button type="primary">上传图片</el-button>
           <template #tip>
