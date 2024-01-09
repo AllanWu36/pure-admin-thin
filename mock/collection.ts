@@ -49,5 +49,64 @@ export default [
         }
       };
     }
+  },
+  {
+    url: "/collection",
+    method: "get",
+    response: ({ body }) => {
+      return {
+        success: true,
+        data: {
+          collections: [
+            {
+              date: "2030-05-01",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-02",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+            {
+              date: "2030-05-03",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            },
+
+            {
+              date: "2030-05-04",
+              name: "Tom",
+              address: "No. 189, Grove St, Los Angeles"
+            }
+          ]
+        }
+      };
+    }
   }
 ] as MockMethod[];

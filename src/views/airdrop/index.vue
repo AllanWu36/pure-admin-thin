@@ -33,12 +33,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
 // import forms, { type FormProps } from "./form.vue";
 import forms, { type FormProps } from "./imgform.vue";
+import { getCollections } from "@/api/collection";
 function handleClick(row) {
   console.log(
     "%crow===>>>: ",
@@ -105,64 +106,26 @@ const columns: Array<TableColumns> = [
   }
 ];
 
-const tableData = [
-  {
-    date: "2030-05-01",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-02",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-  {
-    date: "2030-05-03",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  },
-
-  {
-    date: "2030-05-04",
-    name: "Tom",
-    address: "No. 189, Grove St, Los Angeles"
-  }
-];
+const tableData = ref([]);
 
 const loading = ref(true);
 const pagination = reactive({
   pageSize: 5,
   currentPage: 1,
   background: true,
-  total: tableData.length
+  total: tableData.value.length
 });
 
-setTimeout(() => {
-  loading.value = false;
-}, 1500);
+onMounted(async () => {
+  try {
+    const collections = await getCollections();
+    if (collections) {
+      console.log(collections);
+      tableData.value = collections.data.collections;
+    }
+    loading.value = false;
+  } catch (error) {
+    console.error("Error fetching images:", error);
+  }
+});
 </script>
