@@ -37,7 +37,7 @@ import { ref, reactive, onMounted } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
-// import forms, { type FormProps } from "./form.vue";
+// import testforms, { type TestFormProps } from "./form.vue";
 import forms, { type FormProps } from "./imgform.vue";
 import { getCollections } from "@/api/collection";
 function handleClick(row) {
