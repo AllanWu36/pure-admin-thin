@@ -20,9 +20,23 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>test</div>
+  <el-form :model="creator">
+    <el-form-item label="名称">
+      <el-input
+        v-model="creator.name"
+        class="!w-[400px]"
+        placeholder="请输入名称"
+      />
+    </el-form-item>
+    <el-form-item label="头像">
+      <el-input
+        v-model="creator.img"
+        class="!w-[880px]"
+        placeholder="请输入图片url"
+      />
+    </el-form-item>
+  </el-form>
 </template>
 
 <style lang='scss' scoped>
-
 </style>

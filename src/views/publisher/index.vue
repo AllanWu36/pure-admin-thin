@@ -2,8 +2,9 @@
 import { addDialog } from '@/components/ReDialog';
 import addForm, { type addFormProps } from "./addCreatorForm.vue";
 import editForm, { type editFormProps } from "./editCreatorForm.vue";
+import delForm, { type delFormProps } from "./delCreatorForm.vue";
 import { ref, reactive, onMounted } from "vue";
-import { addCreator, getCreator } from "@/api/creator";
+import { addCreator, getCreator, updateCreatorById, delCreatorById} from "@/api/creator";
 import type { TableColumns } from "@pureadmin/table";
 import { message } from "@/utils/message";
 
@@ -29,7 +30,6 @@ const columns: Array<TableColumns> = [
   }
 ];
 
-
 //修改按钮
 function handleClickEdit(row: any) {
   addDialog({
@@ -38,15 +38,23 @@ function handleClickEdit(row: any) {
     contentRenderer: () => editForm,
     props: {
       // 赋默认值
-      data: row
+      creator: {
+        name: row.name,
+        img: row.img
+      }
     },
-    closeCallBack: ({ options, args }) => {
+    closeCallBack: async ({ options, args }) => {
       // options.props 是响应式的
+      const { creator } = options.props as editFormProps;
       if (args?.command === "cancel") {
         // 您点击了取消按钮
-        message(`您点击了取消按钮，当前表单数据为 ${data.urlList},id为${row}`);
+        message(`您点击了取消按钮，当前表单数据为 ${creator},id为${row}`);
       } else if (args?.command === "sure") {
-        message(`您点击了确定按钮，当前表单数据为 ${data.urlList}`);
+        message(`您点击了确定按钮，当前表单数据为 ${creator}`);
+        const ret = await updateCreatorById(row.id, creator);
+        if (ret) {
+          message(`您点击了确定按钮，当前表单数据为 ${creator}`);
+        }
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
       }
@@ -84,6 +92,41 @@ function handleClickAddCreator() {
     }
   });
 }
+
+// 删除按钮
+function handleClickDelCreator(row: any) {
+  addDialog({
+    width: "20%",
+    title: "删除",
+    contentRenderer: () => delForm,
+    closeCallBack: async ({ options, args }) => {
+      if (args?.command === "cancel") {
+        // 您点击了取消按钮
+        message(`取消`);
+        console.log(row);
+      } else if (args?.command === "sure") {
+        const ret = delCreatorById(row);
+        if (ret) {
+          message(`删除 id为${row}`);
+          try {
+            loading.value = true;
+            const creators = await getCreator();
+            if (creators) {
+              console.log(creators);
+              tableData.value = creators.data.items;
+            }
+            loading.value = false;
+          } catch (error) {
+            console.error("Error fetching images:", error);
+          }
+        }
+      } else {
+        // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
+      }
+    }
+  });
+}
+
 
 const tableData = ref([]);
 
@@ -133,7 +176,7 @@ onMounted(async () => {
         >
           修改
         </el-button>
-        <el-button link type="warning" size="small">删除</el-button>
+        <el-button link type="warning" size="small" @click="handleClickDelCreator(row)">删除</el-button>
       </template>
     </pure-table>
     <dialog />

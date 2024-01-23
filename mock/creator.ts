@@ -56,5 +56,33 @@ export default [
         statusText: "OK"
       };
     }
+  },
+  {
+    url: /\/update_creator\/(\d+)/, // 使用正则表达式匹配 URL 和路径参数
+    method: "post",
+    response: ({ url }) => {
+      const match = url.match(/\/update_creator\/(\d+)/); // 从 URL 中提取参数
+      if (match && match[1]) {
+        const id = match[1]; // 获取 id 参数
+      }
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    url: /\/creator\/(\d+)/, // 使用正则表达式匹配 URL 和路径参数
+    method: "delete",
+    response: ({ url }) => {
+      const match = url.match(/\/creator\/(\d+)/); // 从 URL 中提取参数
+      if (match && match[1]) {
+        const id = match[1]; // 获取 id 参数
+      }
+      return {
+        status: 200,
+        statusText: `delet ${id} OK`
+      };
+    }
   }
 ] as MockMethod[];

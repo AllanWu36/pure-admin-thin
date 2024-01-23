@@ -3,47 +3,43 @@ import { MockMethod } from "vite-plugin-mock";
 
 export default [
   {
-    url: "/collection/img",
+    // 获取收藏列表
+    url: "/collections",
     method: "get",
     response: ({ body }) => {
       return {
-        success: true,
+        status: 200,
+        statusText: "OK",
         data: {
-          imgs: [
+          pageNum: 1,
+          pageSiz: 6,
+          totalPage: 1,
+          total: 2,
+          size: 2,
+          content: [
             {
-              people: "cn",
-              id: 1,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+              id: "1747885806883700736",
+              name: "化屋·云海仙境",
+              cover: "https://hwnft.j9meta.cn/staticfiles/云海封面.jpg",
+              price: 0.01,
+              quantity: 10,
+              stock: 10,
+              saleTime: "2024-01-18 14:00",
+              creatorName: "化屋村",
+              creatorAvatar: "https://hwnft.j9meta.cn/staticfiles/null",
+              pickFlag: false
             },
             {
-              people: "cn",
-              id: 2,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-            },
-            {
-              people: "cn",
-              id: 3,
-              name: "https://imagecdn.cqliving.com/images/app_29/cms/202305/6a71758d6b27cf9c2f854d0b0df826201d031cff.jpg?x-oss-process=image%2Fresize%2Cm_lfit%2Cw_720%2Ch_16384"
-            },
-            {
-              people: "cn",
-              id: 4,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-            },
-            {
-              people: "cn",
-              id: 5,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-            },
-            {
-              people: "cn",
-              id: 6,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
-            },
-            {
-              people: "cn",
-              id: 7,
-              name: "https://p1.itc.cn/q_70/images03/20230531/c4a2b095c3bd41b59783b12c02c50d3b.png"
+              id: "1746788356039114752",
+              name: "化屋·春瑞吉祥",
+              cover: "https://hwnft.j9meta.cn/staticfiles/苗绣封面裁剪版.jpg",
+              price: 0.1,
+              quantity: 20,
+              stock: 15,
+              saleTime: "2024-01-15 14:00",
+              creatorName: "化屋村",
+              creatorAvata: "https://hwnft.j9meta.cn/staticfiles/null",
+              pickFlag: false
             }
           ]
         }
@@ -51,61 +47,121 @@ export default [
     }
   },
   {
-    url: "/collection",
+    // 获取藏品story
+    url: "/collection/story/",
     method: "get",
     response: ({ body }) => {
       return {
-        success: true,
+        status: 200,
+        statusText: "OK",
         data: {
-          collections: [
-            {
-              date: "2030-05-01",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-02",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
-            {
-              date: "2030-05-03",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            },
+          imgs: [
+            [
+              {
 
-            {
-              date: "2030-05-04",
-              name: "Tom",
-              address: "No. 189, Grove St, Los Angeles"
-            }
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_01.jpg"
+              },
+              {
+
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_02.jpg"
+              },
+              {
+
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_03.jpg"
+              },
+              {
+
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_04.jpg"
+              },
+              {
+
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_05.jpg"
+              },
+              {
+
+                id: 1,
+                name: "1.jpg",
+                url: "https://hwnft.j9meta.cn/staticfiles/1_06.jpg"
+              }
+            ]
           ]
         }
+      };
+    }
+  },
+  {
+    // 新增藏品
+    url: "/collection",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    // 修改藏品story
+    url: "/collection/story/",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    // 铸造藏品
+    url: "/collection/mint/",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    // 立即发布藏品
+    url: "/collection/publish/",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    // 定时发布藏品
+    url: "/collection/schedule/",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
+      };
+    }
+  },
+  {
+    // 取消发布藏品
+    url: "/collection/cancel/",
+    method: "post",
+    response: ({ body }) => {
+      return {
+        status: 200,
+        statusText: "OK"
       };
     }
   }

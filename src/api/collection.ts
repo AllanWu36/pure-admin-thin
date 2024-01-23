@@ -1,20 +1,35 @@
 import { http } from "@/utils/http";
+import { dateType } from "@pureadmin/utils";
 
 export type img_item = {
   id: number;
-  img_url: string;
-  img_name: string;
+  name: string;
+  url: string;
 };
 export type collection_item = {
-  id: number;
+  id: string;
   name: string;
-  pubtime: string;
+  cover: string;
+  price: float;
+  quantity: number;
+  stock: number;
+  saleTime: string;
+  creatorName: string;
+  creatorAvatar: string;
 };
 
 // 这里定义返回值类型，使接口拥有良好的类型推导
-export type ImgsResult = {
+export type CommonResult = {
   /** 是否请求成功 */
-  success: boolean;
+  status: number;
+  statusText: string;
+};
+
+// 这里定义返回值类型，使接口拥有良好的类型推导
+export type CollectionStoryResult = {
+  /** 是否请求成功 */
+  status: number;
+  statusText: string;
   data: {
     /** 图片url */
     imgs: Array<img_item>;
@@ -24,19 +39,91 @@ export type ImgsResult = {
 // 这里定义返回值类型，使接口拥有良好的类型推导
 export type CollectionsResult = {
   /** 是否请求成功 */
-  success: boolean;
+  status: number;
+  statusText: string;
   data: {
     /** 图片url */
-    collections: Array<collection_item>;
+    pageNum: number;
+    pageSiz: number;
+    totalPage: number;
+    total: number;
+    size: number;
+    content: Array<collection_item>;
   };
 };
 
-/** 藏品list接口 */
+type module_collection = {
+  name: string;
+  img: string;
+};
+
+// 获取收藏列表
 export const getCollections = () => {
   return http.request<CollectionsResult>("get", "/collection");
 };
 
-/** 藏品图片接口 */
-export const getImgs = (params?: object) => {
-  return http.request<ImgsResult>("get", "/collection/img", { params });
+// 获取收藏story
+export const getCollectionStory = (id: string) => {
+  return http.request<CollectionStoryResult>("get", "/collection/story/" + id);
+};
+
+// 新增藏品
+export const addCollection = (collection: module_collection) => {
+  const data = {
+    ...collection
+  };
+  return http.request<CommonResult>("post", "/collection", {
+    body: data
+  });
+};
+
+// 修改藏品
+export const updateCollection = (id: string, collection: module_collection) => {
+  const data = {
+    ...collection
+  };
+  return http.request<CommonResult>("post", "/collection" + id, {
+    body: data
+  });
+};
+
+// 铸造藏品
+export const mintCollection = (id: number) => {
+  const data = {
+    id: id
+  };
+  return http.request<CommonResult>("post", "/collection/mint", {
+    body: data
+  });
+};
+
+// 立即发布藏品
+export const publishCollection = (id: number) => {
+  const data = {
+    collectionid: id
+  };
+  return http.request<CommonResult>("post", "/collection/publish/", {
+    body: data
+  });
+};
+
+// 定时发布藏品
+export const scheduleCollection = (id: number, saleTime: dateType) => {
+  const data = {
+    collectionid: id,
+    publis_time: saleTime
+  };
+  return http.request<CommonResult>("post", "/collection/schedule/", {
+    body: data
+  });
+};
+
+// 取消发布藏品
+export const cancelPublishCollection = (id: number) => {
+  const data = {
+    collectionid: id
+  };
+  return http.request<CommonResult>("post", "/collection/cancel/", {
+    body: data
+  });
 };

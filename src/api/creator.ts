@@ -27,7 +27,7 @@ type result = {
   status: internal;
   statusText: string;
 };
-type add_creator = {
+type module_creator = {
   name: string;
   img: string;
 };
@@ -36,7 +36,7 @@ export const getCreator = () => {
   return http.request<creator_result>("get", "/creator");
 };
 
-export const addCreator = (creator: add_creator) => {
+export const addCreator = (creator: module_creator) => {
   const data = {
     ...creator // 这里假设creator是一个对象，包含了你想发送的数据
   };
@@ -45,4 +45,15 @@ export const addCreator = (creator: add_creator) => {
 
 export const getCreatorById = (id: string) => {
   return http.request<creator_result>("get", "/creator/" + id);
+};
+
+export const updateCreatorById = (id: string, creator: module_creator) => {
+  const data = {
+    ...creator // 这里假设creator是一个对象，包含了你想发送的数据
+  };
+  return http.request<creator_result>("post", "/creator/" + id, { body: data });
+};
+
+export const delCreatorById = (id: string) => {
+  return http.request<result>("delete", "/creator/" + id);
 };
