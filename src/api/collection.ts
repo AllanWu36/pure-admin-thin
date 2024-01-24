@@ -57,9 +57,13 @@ type module_collection = {
   img: string;
 };
 
+type module_story = {
+  img: Array<img_item>;
+};
+
 // 获取收藏列表
 export const getCollections = () => {
-  return http.request<CollectionsResult>("get", "/collection");
+  return http.request<CollectionsResult>("get", "/collections");
 };
 
 // 获取收藏story
@@ -85,6 +89,14 @@ export const updateCollection = (id: string, collection: module_collection) => {
   return http.request<CommonResult>("post", "/collection" + id, {
     body: data
   });
+};
+
+// 更新收藏story
+export const updateCollectionStory = (id: string, storys: Array<img_item>) => {
+  const data = {
+    ...storys
+  };
+  return http.request<CommonResult>("post", "/collection/story/" + id, { data });
 };
 
 // 铸造藏品
@@ -114,7 +126,7 @@ export const scheduleCollection = (id: number, saleTime: dateType) => {
     publis_time: saleTime
   };
   return http.request<CommonResult>("post", "/collection/schedule/", {
-    body: data
+    data
   });
 };
 
@@ -124,6 +136,6 @@ export const cancelPublishCollection = (id: number) => {
     collectionid: id
   };
   return http.request<CommonResult>("post", "/collection/cancel/", {
-    body: data
+    data
   });
 };

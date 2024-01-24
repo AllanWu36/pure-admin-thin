@@ -8,7 +8,6 @@ import { addCreator, getCreator, updateCreatorById, delCreatorById} from "@/api/
 import type { TableColumns } from "@pureadmin/table";
 import { message } from "@/utils/message";
 
-
 const columns: Array<TableColumns> = [
   {
     label: "名称",
@@ -61,6 +60,7 @@ function handleClickEdit(row: any) {
     }
   });
 }
+
 // 添加按钮
 function handleClickAddCreator() {
   addDialog({
@@ -127,7 +127,6 @@ function handleClickDelCreator(row: any) {
   });
 }
 
-
 const tableData = ref([]);
 
 const loading = ref(true);
@@ -146,6 +145,7 @@ onMounted(async () => {
       tableData.value = creators.data.items;
     }
     loading.value = false;
+    pagination.total = tableData.value.length;
   } catch (error) {
     console.error("Error fetching images:", error);
   }

@@ -8,19 +8,19 @@ import { ElMessage, ElMessageBox } from "element-plus";
 
 import type { UploadProps, UploadUserFile } from "element-plus";
 
-async function get_Imgs(id: number) {
-  const result = await getCollectionStory("" + id);
-  if (result.status == 200) {
+async function get_Imgs(id: string) {
+  const result = await getCollectionStory(id);
+  if (result.status === 200) {
     // console.log(result.data);
     return result.data;
   }
 }
 
 // 声明 props 类型
-export interface FormProps {
+export interface storyFormProps {
   // url 列表
   data: {
-    id: number;
+    id: string;
     num: number;
     urlList: img_item[];
   };
@@ -28,8 +28,8 @@ export interface FormProps {
 
 // 声明 props 默认值
 // 推荐阅读：https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
-const props = withDefaults(defineProps<FormProps>(), {
-  data: () => ({ num: 0, urlList: [] })
+const props = withDefaults(defineProps<storyFormProps>(), {
+  data: () => ({ id: "0", num: 0, urlList: [] })
 });
 
 // const newUrlInline = ref(lists);
@@ -40,7 +40,7 @@ onMounted(async () => {
     const images = await get_Imgs(props_data.value.id);
     if (images) {
       props_data.value.urlList = images.imgs;
-      console.log(props_data.value.urlList[0]);
+      console.log(props_data.value.urlList);
     }
   } catch (error) {
     console.error("Error fetching images:", error);
@@ -87,7 +87,7 @@ const change = (evt): void => {
     <div class="w-1/2">
       <!-- 图片预览对话框 -->
       <div v-for="(url, index) in props_data.urlList" :key="index">
-        <img :src="url.name" style="max-width: 100%; margin-bottom: 2px" />
+        <img :src="url.url" style="max-width: 100%; margin-bottom: 2px" />
       </div>
     </div>
     <div class="w-1/2">

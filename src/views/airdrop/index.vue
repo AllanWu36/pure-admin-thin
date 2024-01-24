@@ -21,7 +21,7 @@
           link
           type="primary"
           size="small"
-          @click="onFormOneClick(row)"
+          @click="handleClickUpdateStory(row)"
         >
           修改图片
         </el-button>
@@ -48,22 +48,16 @@ function handleClick(row) {
   );
 }
 
-// 结合Form表单（第一种方式，弹框关闭立刻恢复初始值）通过 props 属性接收子组件的 prop 并赋值
-function onFormOneClick(row) {
+// 修改story图片
+function handleClickUpdateStory(row) {
   addDialog({
     width: "70%",
-    title: "结合Form表单（第一种方式）",
+    title: "修改图片",
     contentRenderer: () => forms,
-    // props: {
-    //   // 赋默认值
-    //   formInline: {
-    //     user: "菜虚鲲",
-    //     region: ""
-    //   }
-    // },
     props: {
       // 赋默认值
       data: {
+        id: row,
         num: 0,
         urlList: []
       }
@@ -87,16 +81,24 @@ function onFormOneClick(row) {
 
 const columns: Array<TableColumns> = [
   {
-    label: "日期",
-    prop: "date"
-  },
-  {
     label: "名字",
     prop: "name"
   },
   {
-    label: "地址",
-    prop: "address"
+    label: "价格",
+    prop: "price"
+  },
+  {
+    label: "发行量",
+    prop: "quantity"
+  },
+  {
+    label: "库存 ",
+    prop: "stock"
+  },
+  {
+    label: "发行时间 ",
+    prop: "saleTime"
   },
   {
     label: "操作",
@@ -121,7 +123,7 @@ onMounted(async () => {
     const collections = await getCollections();
     if (collections) {
       console.log(collections);
-      tableData.value = collections.data.collections;
+      tableData.value = collections.data.content;
     }
     loading.value = false;
   } catch (error) {

@@ -12,7 +12,7 @@ export default [
         statusText: "OK",
         data: {
           pageNum: 1,
-          pageSiz: 6,
+          pageSiz: 10,
           totalPage: 1,
           total: 2,
           size: 2,
@@ -48,7 +48,8 @@ export default [
   },
   {
     // 获取藏品story
-    url: "/collection/story/",
+    // url: "/collection/story/1",
+    url: /\/collection\/story\/(\d+)/, // 使用正则表达式匹配 URL 和路径参数
     method: "get",
     response: ({ body }) => {
       return {
@@ -56,44 +57,36 @@ export default [
         statusText: "OK",
         data: {
           imgs: [
-            [
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_01.jpg"
-              },
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_02.jpg"
-              },
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_03.jpg"
-              },
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_04.jpg"
-              },
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_05.jpg"
-              },
-              {
-
-                id: 1,
-                name: "1.jpg",
-                url: "https://hwnft.j9meta.cn/staticfiles/1_06.jpg"
-              }
-            ]
+            {
+              id: 1,
+              name: "1.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_01.jpg"
+            },
+            {
+              id: 2,
+              name: "2.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_02.jpg"
+            },
+            {
+              id: 3,
+              name: "3.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_03.jpg"
+            },
+            {
+              id: 4,
+              name: "4.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_04.jpg"
+            },
+            {
+              id: 5,
+              name: "5.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_05.jpg"
+            },
+            {
+              id: 6,
+              name: "6.jpg",
+              url: "https://hwnft.j9meta.cn/staticfiles/1_06.jpg"
+            }
           ]
         }
       };
