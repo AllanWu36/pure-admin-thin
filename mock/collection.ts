@@ -40,6 +40,18 @@ export default [
               creatorName: "化屋村",
               creatorAvata: "https://hwnft.j9meta.cn/staticfiles/null",
               pickFlag: false
+            },
+            {
+              id: "1747084251200749568",
+              name: "化屋·小黄姜",
+              cover: "https://hwnft.j9meta.cn/staticfiles/苗绣封面裁剪版.jpg",
+              price: 0.1,
+              quantity: 5,
+              stock: 0,
+              saleTime: "2024-01-15 14:00",
+              creatorName: "化屋村",
+              creatorAvata: "https://hwnft.j9meta.cn/staticfiles/null",
+              pickFlag: true
             }
           ]
         }

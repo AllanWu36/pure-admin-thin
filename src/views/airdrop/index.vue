@@ -14,18 +14,14 @@
       :pagination="pagination"
     >
       <template #operation="{ row }">
-        <el-button link type="primary" size="small" @click="handleClick(row)">
-          详情
-        </el-button>
         <el-button
           link
-          type="primary"
+          type="warning"
           size="small"
-          @click="handleClickUpdateStory(row)"
+          @click="handleDeleteClick(row)"
         >
-          修改图片
+          删除
         </el-button>
-        <el-button link type="warning" size="small">删除</el-button>
       </template>
     </pure-table>
     <dialog />
@@ -37,40 +33,22 @@ import { ref, reactive, onMounted } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
-// import testforms, { type TestFormProps } from "./form.vue";
-import forms, { type FormProps } from "./imgform.vue";
 import { getCollections } from "@/api/collection";
-function handleClick(row) {
-  console.log(
-    "%crow===>>>: ",
-    "color: MidnightBlue; background: Aquamarine; font-size: 20px;",
-    row
-  );
-}
-
-// 修改story图片
-function handleClickUpdateStory(row) {
+import delForm from "./deleteAirdrop.vue";
+import {getAirdrops, delCreatorById} from "@/api/airdrop";
+//删除兑换码
+function handleDeleteClick(row) {
   addDialog({
     width: "70%",
     title: "修改图片",
-    contentRenderer: () => forms,
-    props: {
-      // 赋默认值
-      data: {
-        id: row,
-        num: 0,
-        urlList: []
-      }
-    },
+    contentRenderer: () => delForm,
+
     closeCallBack: ({ options, args }) => {
-      // options.props 是响应式的
-      const { data } = options.props as FormProps;
-      // const text = `姓名：${formInline.user} 城市：${formInline.region}`;
-      console.log(data.urlList);
       if (args?.command === "cancel") {
         // 您点击了取消按钮
-        message(`您点击了取消按钮，当前表单数据为 ${data.urlList},id为${row}`);
+        message(`您点击了取消按钮`);
       } else if (args?.command === "sure") {
+
         message(`您点击了确定按钮，当前表单数据为 ${data.urlList}`);
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
@@ -81,24 +59,28 @@ function handleClickUpdateStory(row) {
 
 const columns: Array<TableColumns> = [
   {
-    label: "名字",
-    prop: "name"
+    label: "id",
+    prop: "id"
   },
   {
-    label: "价格",
-    prop: "price"
+    label: "兑换码",
+    prop: "code"
   },
   {
-    label: "发行量",
-    prop: "quantity"
+    label: "藏品名称",
+    prop: "collection_name"
   },
   {
-    label: "库存 ",
-    prop: "stock"
+    label: "创建时间 ",
+    prop: "create_time"
   },
   {
-    label: "发行时间 ",
-    prop: "saleTime"
+    label: "兑换时间 ",
+    prop: "exchange_time"
+  },
+  {
+    label: "兑换人 ",
+    prop: "member_name"
   },
   {
     label: "操作",
@@ -120,10 +102,10 @@ const pagination = reactive({
 
 onMounted(async () => {
   try {
-    const collections = await getCollections();
-    if (collections) {
-      console.log(collections);
-      tableData.value = collections.data.content;
+    const airdrops = await getAirdrops();
+    if (airdrops) {
+      console.log(airdrops);
+      tableData.value = airdrops.data.content;
     }
     loading.value = false;
   } catch (error) {

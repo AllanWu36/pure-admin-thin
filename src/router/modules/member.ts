@@ -1,14 +1,14 @@
 // 最简代码，也就是这些字段必须有
 export default {
-  path: "/user",
+  path: "/member",
   meta: {
     title: "用户"
   },
   children: [
     {
-      path: "/user/index",
-      name: "user",
-      component: () => import("@/views/user/index.vue"),
+      path: "/member/index",
+      name: "member",
+      component: () => import("@/views/member/index.vue"),
       meta: {
         title: "用户"
       }

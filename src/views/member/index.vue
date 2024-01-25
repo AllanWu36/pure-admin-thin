@@ -18,9 +18,9 @@
           link
           type="warning"
           size="small"
-          @click="handleDeleteClick(row)"
+          @click="handleDetailClick(row)"
         >
-          删除
+          详情
         </el-button>
       </template>
     </pure-table>
@@ -33,20 +33,21 @@ import { ref, reactive, onMounted } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
-import { getTransfers } from "@/api/transfer";
-
+import { getMembers } from "@/api/member";
+import editForm from "./editMemberForm.vue";
 //删除兑换码
-function handleDeleteClick(row) {
+function handleDetailClick(row) {
   addDialog({
     width: "70%",
     title: "修改图片",
-    contentRenderer: () => delForm,
+    contentRenderer: () => editForm,
 
     closeCallBack: ({ options, args }) => {
       if (args?.command === "cancel") {
         // 您点击了取消按钮
         message(`您点击了取消按钮`);
       } else if (args?.command === "sure") {
+
         message(`您点击了确定按钮`);
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
@@ -61,24 +62,24 @@ const columns: Array<TableColumns> = [
     prop: "id"
   },
   {
-    label: "赠送人",
-    prop: "give_from_id"
+    label: "名称",
+    prop: "nick_name"
   },
   {
-    label: "受赠人",
-    prop: "give_to_id"
+    label: "注册时间",
+    prop: "registered_time"
   },
   {
-    label: "赠送时间 ",
-    prop: "give_time"
+    label: "区块链地址 ",
+    prop: "block_chain_txid"
   },
   {
-    label: "赠送订单 ",
-    prop: "order_no"
+    label: "区块链证书 ",
+    prop: "block_chain_cert_name"
   },
   {
-    label: "上链凭证 ",
-    prop: "txid"
+    label: "最后登录时间 ",
+    prop: "lately_login_time"
   },
   {
     label: "操作",
@@ -100,10 +101,10 @@ const pagination = reactive({
 
 onMounted(async () => {
   try {
-    const transfers = await getTransfers();
-    if (transfers) {
-      console.log(transfers);
-      tableData.value = transfers.data.content;
+    const members = await getMembers();
+    if (members) {
+      console.log(members);
+      tableData.value = members.data.content;
     }
     loading.value = false;
   } catch (error) {
