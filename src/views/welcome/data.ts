@@ -24,16 +24,16 @@ const chartData = [
     color: "#e85f33",
     duration: 1600,
     name: "藏品销售数",
-    value: 16580,
+    value: 26,
     percent: "+70%",
-    data: [2216, 1148, 1255, 788, 4821, 1973, 4379]
+    data: [0, 0, 1, 14, 18, 20, 26]
   },
   {
     icon: CheckLine,
     bgColor: "#eff8f4",
     color: "#26ce83",
     duration: 1500,
-    name: "赠送次数",
+    name: "转赠次数",
     value: 3,
     percent: "+50%",
     data: [1, 1, 2, 2, 2, 3, 3]
