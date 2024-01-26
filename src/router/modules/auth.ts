@@ -7,10 +7,18 @@ export default {
   children: [
     {
       path: "/sys/index",
-      name: "sys",
+      name: "admin",
       component: () => import("@/views/sys/index.vue"),
       meta: {
-        title: "系统管理"
+        title: "管理员管理"
+      }
+    },
+    {
+      path: "/sys/role",
+      name: "role",
+      component: () => import("@/views/sys/role.vue"),
+      meta: {
+        title: "角色管理"
       }
     }
   ]
