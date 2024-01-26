@@ -106,6 +106,7 @@ onMounted(async () => {
     if (airdrops) {
       console.log(airdrops);
       tableData.value = airdrops.data.content;
+      pagination.total = tableData.value.length;
     }
     loading.value = false;
   } catch (error) {

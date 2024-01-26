@@ -104,6 +104,7 @@ onMounted(async () => {
     if (transfers) {
       console.log(transfers);
       tableData.value = transfers.data.content;
+      pagination.total = tableData.value.length;
     }
     loading.value = false;
   } catch (error) {

@@ -52,8 +52,11 @@ onMounted(async () => {
     <el-form-item label="价格">
       <el-input-number v-model="newFormInline.price" :precision='2' />
     </el-form-item>
-    <el-form-item label="价格">
-      <el-input-number v-model="newFormInline.price" :precision='2' />
+    <el-form-item label="发行商">
+      <el-input-number v-model="newFormInline.creator" />
+    </el-form-item>
+    <el-form-item label="是否甄选">
+      <e v-model="newFormInline.pickFlag" />
     </el-form-item>
   </el-form>
 </template>

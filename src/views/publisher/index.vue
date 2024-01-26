@@ -65,7 +65,7 @@ function handleClickEdit(row: any) {
 function handleClickAddCreator() {
   addDialog({
     width: "70%",
-    title: "添加创作者",
+    title: "添加发行商",
     contentRenderer: () => addForm,
     props: {
       creator: {
@@ -157,7 +157,7 @@ onMounted(async () => {
     <!-- <h1 style="text-align: center">按需引入示例</h1> -->
     <div class="px-2 py-1 text-right">
       <el-button type="primary" plain @click="handleClickAddCreator"
-        >添加创建者+</el-button
+        >添加发行商+</el-button
       >
     </div>
     <pure-table

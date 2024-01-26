@@ -2,7 +2,7 @@
 export default {
   path: "/transfer",
   meta: {
-    title: "转赠"
+    title: "转赠管理"
   },
   children: [
     {
@@ -10,7 +10,7 @@ export default {
       name: "transfer",
       component: () => import("@/views/transfer/index.vue"),
       meta: {
-        title: "转赠"
+        title: "转赠管理"
       }
     }
   ]

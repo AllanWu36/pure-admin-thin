@@ -12,16 +12,16 @@ export default [
         data: {
           items: [
             {
-              name: "cn",
+              name: "贵州中科享链云科技有限公司",
               id: 1,
-              block_chain_credit_code: "asdfbwer",
-              nft_account: "1233"
+              block_chain_credit_code: "kHkCw0E5U9ma7w==",
+              nft_account: "95318e58769b6105118380cba7cd89c04f981452ca020fb72666550bcfa00f290d35"
             },
             {
-              name: "cn",
+              name: "测试发行商",
               id: 2,
-              block_chain_credit_code: "asdfbwer",
-              nft_account: "1233"
+              block_chain_credit_code: "QSbN3GuNP2w9vg==",
+              nft_account: "935786fe8efa692d1cb383cfe6b953b1edc827cd979fe33255515d5ba231e8134463"
             }
           ]
         }

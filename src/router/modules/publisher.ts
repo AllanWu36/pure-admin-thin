@@ -2,7 +2,7 @@
 export default {
   path: "/publisher",
   meta: {
-    title: "发行商"
+    title: "发行商管理"
   },
   children: [
     {
@@ -10,7 +10,7 @@ export default {
       name: "publisher",
       component: () => import("@/views/publisher/index.vue"),
       meta: {
-        title: "发行商"
+        title: "发行商管理"
       }
     }
   ]

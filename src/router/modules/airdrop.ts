@@ -2,7 +2,7 @@
 export default {
   path: "/airdrop",
   meta: {
-    title: "兑换码"
+    title: "空投管理"
   },
   children: [
     {
@@ -10,7 +10,7 @@ export default {
       name: "airdrop",
       component: () => import("@/views/airdrop/index.vue"),
       meta: {
-        title: "兑换码"
+        title: "空投管理"
       }
     }
   ]

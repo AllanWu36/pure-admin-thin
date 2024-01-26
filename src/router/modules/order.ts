@@ -2,7 +2,7 @@
 export default {
   path: "/order",
   meta: {
-    title: "订单"
+    title: "购买记录"
   },
   children: [
     {
@@ -10,7 +10,7 @@ export default {
       name: "order",
       component: () => import("@/views/order/index.vue"),
       meta: {
-        title: "订单"
+        title: "购买记录"
       }
     }
   ]

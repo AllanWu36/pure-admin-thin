@@ -2,7 +2,7 @@
 export default {
   path: "/conf",
   meta: {
-    title: "平台配置"
+    title: "系统配置"
   },
   children: [
     {
@@ -10,7 +10,7 @@ export default {
       name: "conf",
       component: () => import("@/views/conf/index.vue"),
       meta: {
-        title: "平台配置"
+        title: "系统配置"
       }
     }
   ]
