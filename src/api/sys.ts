@@ -13,7 +13,7 @@ export type members_result = {
   statusText: string;
   data: {
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;

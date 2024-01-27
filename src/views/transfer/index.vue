@@ -20,7 +20,7 @@
           size="small"
           @click="handleDeleteClick(row)"
         >
-          删除
+          删除记录
         </el-button>
       </template>
     </pure-table>
@@ -61,20 +61,24 @@ const columns: Array<TableColumns> = [
     prop: "id"
   },
   {
+    label: "藏品名称",
+    prop: "collectionName"
+  },
+  {
     label: "赠送人",
-    prop: "give_from_id"
+    prop: "giveFromMobile"
   },
   {
     label: "受赠人",
-    prop: "give_to_id"
+    prop: "giveToMobile"
   },
   {
     label: "赠送时间 ",
-    prop: "give_time"
+    prop: "giveTime"
   },
   {
-    label: "赠送订单 ",
-    prop: "order_no"
+    label: "赠送藏品链上token ",
+    prop: "issuedCollectionTokenId"
   },
   {
     label: "上链凭证 ",
@@ -104,7 +108,9 @@ onMounted(async () => {
     if (transfers) {
       console.log(transfers);
       tableData.value = transfers.data.content;
-      pagination.total = tableData.value.length;
+      pagination.pageSize = transfers.data.pageSize;
+      pagination.currentPage = transfers.data.pageNum;
+      pagination.total = transfers.data.total;
     }
     loading.value = false;
   } catch (error) {

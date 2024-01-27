@@ -12,11 +12,14 @@ type member_item = {
 };
 
 export type members_result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
+    /** 图片url */
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;
@@ -30,5 +33,13 @@ export type result = {
 };
 
 export const getMembers = () => {
-  return http.request<members_result>("get", "/members");
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<members_result>(
+    "get",
+    baseUrlApi("member/findMemberByPage"),
+    { params }
+  );
 };

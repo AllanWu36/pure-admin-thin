@@ -13,11 +13,14 @@ type order_item = {
 };
 
 export type orders_result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
+    /** 图片url */
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;
@@ -31,5 +34,13 @@ export type result = {
 };
 
 export const getOrders = () => {
-  return http.request<orders_result>("get", "/orders");
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<orders_result>(
+    "get",
+    baseUrlApi("payOrder/findPayOrderByPage"),
+    {params}
+  );
 };

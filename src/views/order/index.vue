@@ -62,11 +62,15 @@ const columns: Array<TableColumns> = [
   },
   {
     label: "订单号",
-    prop: "order_no"
+    prop: "orderNo"
+  },
+  {
+    label: "购买商品名称 ",
+    prop: "collectionName"
   },
   {
     label: "购买人",
-    prop: "member_name"
+    prop: "memberMobile"
   },
   {
     label: "价格 ",
@@ -74,15 +78,11 @@ const columns: Array<TableColumns> = [
   },
   {
     label: "状态 ",
-    prop: "state"
+    prop: "stateName"
   },
   {
-    label: "购买商品 ",
-    prop: "issued_collection_name"
-  },
-  {
-    label: "藏品编号 ",
-    prop: "issued_collection_id"
+    label: "购买时间 ",
+    prop: "paidTime"
   },
   {
     label: "操作",
@@ -108,6 +108,9 @@ onMounted(async () => {
     if (orders) {
       console.log(orders);
       tableData.value = orders.data.content;
+      pagination.pageSize = orders.data.pageSize;
+      pagination.currentPage = orders.data.pageNum;
+      pagination.total = orders.data.total;
     }
     loading.value = false;
   } catch (error) {

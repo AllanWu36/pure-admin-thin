@@ -12,11 +12,14 @@ type transfer_item = {
 };
 
 export type transfers_result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
+    /** 图片url */
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;
@@ -30,5 +33,13 @@ export type result = {
 };
 
 export const getTransfers = () => {
-  return http.request<transfers_result>("get", "/transfers");
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<transfers_result>(
+    "get",
+    baseUrlApi("collectionGiveRecord/findCollectionGiveRecordByPage"),
+    { params }
+  );
 };

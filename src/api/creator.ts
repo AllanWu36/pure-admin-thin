@@ -5,22 +5,30 @@ import { baseUrlApi } from "./utils";
 type creator_item = {
   /** 图片url */
   name: string;
-  block_chain_credit_code: string;
-  nft_account: string;
+  createTime: string;
+  lastModifyTime: string;
 };
-type creator_result = {
-  status: internal;
-  statusText: string;
-  data: {
-    items: Array<creator_item>;
-  };
-};
+// type creator_result = {
+//   status: internal;
+//   statusText: string;
+//   data: {
+//     items: Array<creator_item>;
+//   };
+// };
 
 type creator_result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
-    creator: creator_item;
+    /** 图片url */
+    pageNum: number;
+    pageSize: number;
+    totalPage: number;
+    total: number;
+    size: number;
+    content: Array<creator_item>;
   };
 };
 
@@ -34,7 +42,15 @@ type module_creator = {
 };
 
 export const getCreator = () => {
-  return http.request<creator_result>("get", "/creator");
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<creator_result>(
+    "get",
+    baseUrlApi("creator/findCreatorByPage"),
+    { params }
+  );
 };
 
 export const addCreator = (creator: module_creator) => {

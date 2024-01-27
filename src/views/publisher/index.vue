@@ -14,12 +14,12 @@ const columns: Array<TableColumns> = [
     prop: "name"
   },
   {
-    label: "区块链id",
-    prop: "block_chain_credit_code"
+    label: "创建时间",
+    prop: "createTime"
   },
   {
-    label: "数字藏品账号",
-    prop: "nft_account"
+    label: "修改时间",
+    prop: "lastModifyTime"
   },
   {
     label: "操作",
@@ -142,7 +142,10 @@ onMounted(async () => {
     const creators = await getCreator();
     if (creators) {
       console.log(creators);
-      tableData.value = creators.data.items;
+      tableData.value = creators.data.content;
+      pagination.pageSize = creators.data.pageSize;
+      pagination.currentPage = creators.data.pageNum;
+      pagination.total = creators.data.total;
     }
     loading.value = false;
     pagination.total = tableData.value.length;

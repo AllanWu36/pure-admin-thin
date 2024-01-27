@@ -67,21 +67,25 @@ const columns: Array<TableColumns> = [
     prop: "code"
   },
   {
-    label: "藏品名称",
-    prop: "collection_name"
+    label: "兑换藏品名称",
+    prop: "collectionName"
   },
   {
-    label: "创建时间 ",
-    prop: "create_time"
+    label: "状态 ",
+    prop: "stateName"
   },
-  {
-    label: "兑换时间 ",
-    prop: "exchange_time"
-  },
-  {
-    label: "兑换人 ",
-    prop: "member_name"
-  },
+  // {
+  //   label: "创建时间 ",
+  //   prop: "create_time"
+  // },
+  // {
+  //   label: "兑换时间 ",
+  //   prop: "exchange_time"
+  // },
+  // {
+  //   label: "兑换人 ",
+  //   prop: "member_name"
+  // },
   {
     label: "操作",
     width: "180",
@@ -106,6 +110,8 @@ onMounted(async () => {
     if (airdrops) {
       console.log(airdrops);
       tableData.value = airdrops.data.content;
+      pagination.pageSize = airdrops.data.pageSize;
+      pagination.currentPage = airdrops.data.pageNum;
       pagination.total = tableData.value.length;
     }
     loading.value = false;

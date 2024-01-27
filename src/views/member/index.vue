@@ -22,6 +22,9 @@
         >
           详情
         </el-button>
+        <el-button v-if="!row.blockChainAddr" link type="warning" size="small" >
+          区块链注册
+        </el-button>
       </template>
     </pure-table>
     <dialog />
@@ -35,6 +38,7 @@ import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
 import { getMembers } from "@/api/member";
 import editForm from "./editMemberForm.vue";
+import { pa } from "element-plus/es/locale";
 //删除兑换码
 function handleDetailClick(row) {
   addDialog({
@@ -47,7 +51,6 @@ function handleDetailClick(row) {
         // 您点击了取消按钮
         message(`您点击了取消按钮`);
       } else if (args?.command === "sure") {
-
         message(`您点击了确定按钮`);
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
@@ -63,23 +66,23 @@ const columns: Array<TableColumns> = [
   },
   {
     label: "名称",
-    prop: "nick_name"
+    prop: "nickName"
   },
   {
     label: "注册时间",
-    prop: "registered_time"
+    prop: "registeredTime"
   },
   {
     label: "区块链地址 ",
-    prop: "block_chain_txid"
+    prop: "blockChainAddr"
   },
   {
-    label: "区块链证书 ",
-    prop: "block_chain_cert_name"
+    label: "电话",
+    prop: "mobile"
   },
   {
     label: "最后登录时间 ",
-    prop: "lately_login_time"
+    prop: "avatar"
   },
   {
     label: "操作",
@@ -105,6 +108,9 @@ onMounted(async () => {
     if (members) {
       console.log(members);
       tableData.value = members.data.content;
+      pagination.pageSize = members.data.pageSize;
+      pagination.currentPage = members.data.pageNum;
+      pagination.total = members.data.total;
     }
     loading.value = false;
   } catch (error) {

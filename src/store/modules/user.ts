@@ -36,7 +36,6 @@ export const useUserStore = defineStore({
               if (data.code === 200) {
                 setToken(data.data);
               }
-              setToken(data.data);
               resolve(data);
             }
           })

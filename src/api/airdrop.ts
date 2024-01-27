@@ -14,12 +14,14 @@ type airdrop_item = {
 };
 
 export type airdrops_result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
     /** 图片url */
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;
@@ -37,7 +39,15 @@ export type module_airdrop = {
 };
 
 export const getAirdrops = () => {
-  return http.request<airdrops_result>("get", baseUrlApi("airdrops"));
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<airdrops_result>(
+    "get",
+    baseUrlApi("exchangeCode/findExchangeCodeByPage"),
+    { params }
+  );
 };
 
 export const addAirdrop = (airdrop: module_airdrop) => {

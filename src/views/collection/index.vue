@@ -123,8 +123,8 @@ const columns: Array<TableColumns> = [
     prop: "saleTime"
   },
   {
-    label: "甄选",
-    prop: "pickFlag"
+    label: "创作者",
+    prop: "creatorName"
   },
   {
     label: "操作",
@@ -157,10 +157,9 @@ onMounted(async () => {
           item.pickFlag = "是";
         }
       });
-
-      pagination.pageSize = collections.data.pageSiz;
+      pagination.pageSize = collections.data.pageSize;
       pagination.currentPage = collections.data.pageNum;
-      pagination.total = collections.data.total;
+      pagination.total = tableData.value.length;
     }
     loading.value = false;
   } catch (error) {

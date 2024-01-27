@@ -12,7 +12,7 @@ export default [
         statusText: "OK",
         data: {
           pageNum: 1,
-          pageSiz: 10,
+          pageSize: 10,
           totalPage: 1,
           total: 2,
           size: 2,

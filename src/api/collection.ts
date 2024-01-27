@@ -5,7 +5,7 @@ import { baseUrlApi } from "./utils";
 export type img_item = {
   id: number;
   name: string;
-  url: string;
+  picLink: string;
 };
 export type collection_item = {
   id: string;
@@ -15,8 +15,10 @@ export type collection_item = {
   quantity: number;
   stock: number;
   saleTime: string;
+  createTime: string;
   creatorName: string;
   creatorAvatar: string;
+  collectionStorys: Array<img_item>;
 };
 
 // 这里定义返回值类型，使接口拥有良好的类型推导
@@ -40,12 +42,14 @@ export type CollectionStoryResult = {
 // 这里定义返回值类型，使接口拥有良好的类型推导
 export type CollectionsResult = {
   /** 是否请求成功 */
-  status: number;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
   data: {
     /** 图片url */
     pageNum: number;
-    pageSiz: number;
+    pageSize: number;
     totalPage: number;
     total: number;
     size: number;
@@ -64,7 +68,15 @@ type module_story = {
 
 // 获取收藏列表
 export const getCollections = () => {
-  return http.request<CollectionsResult>("get", baseUrlApi("collections"));
+  const params = {
+    pageNum: 1,
+    pageSize: 10
+  };
+  return http.request<CollectionsResult>(
+    "get",
+    baseUrlApi("/collection/findCollectionByPage"),
+    { params }
+  );
 };
 
 // 获取收藏story
@@ -100,7 +112,11 @@ export const updateCollectionStory = (id: string, storys: Array<img_item>) => {
   const data = {
     ...storys
   };
-  return http.request<CommonResult>("post", baseUrlApi("collection/story") + id, { data });
+  return http.request<CommonResult>(
+    "post",
+    baseUrlApi("collection/story") + id,
+    { data }
+  );
 };
 
 // 铸造藏品
@@ -129,9 +145,13 @@ export const scheduleCollection = (id: number, saleTime: dateType) => {
     collectionid: id,
     publis_time: saleTime
   };
-  return http.request<CommonResult>("post", baseUrlApi("collection/schedule/"), {
-    data
-  });
+  return http.request<CommonResult>(
+    "post",
+    baseUrlApi("collection/schedule/"),
+    {
+      data
+    }
+  );
 };
 
 // 取消发布藏品
