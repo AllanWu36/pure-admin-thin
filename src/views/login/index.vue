@@ -22,6 +22,7 @@ import dayIcon from "@/assets/svg/day.svg?component";
 import darkIcon from "@/assets/svg/dark.svg?component";
 import Lock from "@iconify-icons/ri/lock-fill";
 import User from "@iconify-icons/ri/user-3-fill";
+import { useUserStoreHook } from "@/store/modules/user";
 
 defineOptions({
   name: "Login"
@@ -46,37 +47,51 @@ const onLogin = async (formEl: FormInstance | undefined) => {
   loading.value = true;
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
-    if (valid) {
-      setToken({
-        username: "admin",
-        roles: ["admin"],
-        accessToken: "eyJhbGciOiJIUzUxMiJ9.admin"
-      } as any);
-      // 全部采取静态路由模式
-      usePermissionStoreHook().handleWholeMenus([]);
-      addPathMatch();
-      router.push("/");
-      message("登录成功", { type: "success" });
-    } else {
-      loading.value = false;
-      return fields;
-    }
     // if (valid) {
-    //   useUserStoreHook()
-    //     .loginByUsername({ username: ruleForm.username, password: "admin123" })
-    //     .then(res => {
-    //       if (res.success) {
-    //         // 获取后端路由
-    //         initRouter().then(() => {
-    //           router.push(getTopMenu(true).path);
-    //           message("登录成功", { type: "success" });
-    //         });
-    //       }
-    //     });
+    //   setToken({
+    //     username: "admin",
+    //     roles: ["admin"],
+    //     accessToken: "eyJhbGciOiJIUzUxMiJ9.admin"
+    //   } as any);
+    //   // 全部采取静态路由模式
+    //   usePermissionStoreHook().handleWholeMenus([]);
+    //   addPathMatch();
+    //   router.push("/");
+    //   message("登录成功", { type: "success" });
     // } else {
     //   loading.value = false;
     //   return fields;
     // }
+    if (valid) {
+      useUserStoreHook()
+        .loginByUsername({
+          userName: ruleForm.username,
+          loginPwd: ruleForm.password
+        })
+        .then(res => {
+          if (res.success) {
+            console.log(res);
+            // 获取后端路由
+            // initRouter().then(() => {
+            //   router.push(getTopMenu(true).path);
+            //   message("登录成功", { type: "success" });
+            // });
+            // 全部采取静态路由模式
+            usePermissionStoreHook().handleWholeMenus([]);
+            addPathMatch();
+            router.push("/");
+            message("登录成功", { type: "success" });
+          } else {
+            console.log(res);
+            message(res.msg, { type: "error" });
+            return fields;
+          }
+        });
+      loading.value = false;
+    } else {
+      loading.value = false;
+      return fields;
+    }
   });
 };
 

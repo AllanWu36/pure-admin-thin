@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 import internal from "stream";
+import { baseUrlApi } from "./utils";
 
 type creator_item = {
   /** 图片url */

@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 import internal from "stream";
+import { baseUrlApi } from "./utils";
 
 type transfer_item = {
   id: number;

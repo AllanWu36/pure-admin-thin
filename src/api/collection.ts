@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 import { dateType } from "@pureadmin/utils";
+import { baseUrlApi } from "./utils";
 
 export type img_item = {
   id: number;
@@ -63,12 +64,15 @@ type module_story = {
 
 // 获取收藏列表
 export const getCollections = () => {
-  return http.request<CollectionsResult>("get", "/collections");
+  return http.request<CollectionsResult>("get", baseUrlApi("collections"));
 };
 
 // 获取收藏story
 export const getCollectionStory = (id: string) => {
-  return http.request<CollectionStoryResult>("get", "/collection/story/" + id);
+  return http.request<CollectionStoryResult>(
+    "get",
+    baseUrlApi("collection/story/") + id
+  );
 };
 
 // 新增藏品
@@ -76,8 +80,8 @@ export const addCollection = (collection: module_collection) => {
   const data = {
     ...collection
   };
-  return http.request<CommonResult>("post", "/collection", {
-    body: data
+  return http.request<CommonResult>("post", baseUrlApi("collection"), {
+    data
   });
 };
 
@@ -86,8 +90,8 @@ export const updateCollection = (id: string, collection: module_collection) => {
   const data = {
     ...collection
   };
-  return http.request<CommonResult>("post", "/collection" + id, {
-    body: data
+  return http.request<CommonResult>("post", baseUrlApi("collection") + id, {
+    data
   });
 };
 
@@ -96,7 +100,7 @@ export const updateCollectionStory = (id: string, storys: Array<img_item>) => {
   const data = {
     ...storys
   };
-  return http.request<CommonResult>("post", "/collection/story/" + id, { data });
+  return http.request<CommonResult>("post", baseUrlApi("collection/story") + id, { data });
 };
 
 // 铸造藏品
@@ -104,8 +108,8 @@ export const mintCollection = (id: number) => {
   const data = {
     id: id
   };
-  return http.request<CommonResult>("post", "/collection/mint", {
-    body: data
+  return http.request<CommonResult>("post", baseUrlApi("collection/mint"), {
+    data
   });
 };
 
@@ -114,8 +118,8 @@ export const publishCollection = (id: number) => {
   const data = {
     collectionid: id
   };
-  return http.request<CommonResult>("post", "/collection/publish/", {
-    body: data
+  return http.request<CommonResult>("post", baseUrlApi("collection/publish/"), {
+    data
   });
 };
 
@@ -125,7 +129,7 @@ export const scheduleCollection = (id: number, saleTime: dateType) => {
     collectionid: id,
     publis_time: saleTime
   };
-  return http.request<CommonResult>("post", "/collection/schedule/", {
+  return http.request<CommonResult>("post", baseUrlApi("collection/schedule/"), {
     data
   });
 };
@@ -135,7 +139,7 @@ export const cancelPublishCollection = (id: number) => {
   const data = {
     collectionid: id
   };
-  return http.request<CommonResult>("post", "/collection/cancel/", {
+  return http.request<CommonResult>("post", baseUrlApi("collection/cancel/"), {
     data
   });
 };

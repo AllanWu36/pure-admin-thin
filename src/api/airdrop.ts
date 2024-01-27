@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 import internal from "stream";
+import { baseUrlApi } from "./utils";
 
 type airdrop_item = {
   id: string;
@@ -36,16 +37,16 @@ export type module_airdrop = {
 };
 
 export const getAirdrops = () => {
-  return http.request<airdrops_result>("get", "/airdrops");
+  return http.request<airdrops_result>("get", baseUrlApi("airdrops"));
 };
 
 export const addAirdrop = (airdrop: module_airdrop) => {
   const data = {
     ...airdrop
   };
-  return http.request<result>("post", "/airdrop/", { data });
+  return http.request<result>("post", baseUrlApi("airdrop/"), { data });
 };
 
 export const delCreatorById = (id: string) => {
-  return http.request<result>("delete", "/airdrop/" + id);
+  return http.request<result>("delete", baseUrlApi("airdrop/") + id);
 };

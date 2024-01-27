@@ -33,6 +33,9 @@ export const useUserStore = defineStore({
         getLogin(data)
           .then(data => {
             if (data) {
+              if (data.code === 200) {
+                setToken(data.data);
+              }
               setToken(data.data);
               resolve(data);
             }
