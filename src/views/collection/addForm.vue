@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import axios from "axios";
+import { getCreator } from "@/api/creator";
 
 // 声明 props 类型
 export interface addFormProps {
@@ -9,14 +9,24 @@ export interface addFormProps {
     price: number;
     quantity: number;
     creator: number;
-    pickFlag: boolean;
+    date1: string;
+    date2: string;
+    pic_url: Array<string>;
   };
 }
 
 // 声明 props 默认值
 // 推荐阅读：https://cn.vuejs.org/guide/typescript/composition-api.html#typing-component-props
 const props = withDefaults(defineProps<addFormProps>(), {
-  data: () => ({ name: "", price: 1, quantity: 1, creator: 1, pickFlag: false })
+  data: () => ({
+    name: "",
+    price: 1,
+    quantity: 1,
+    creator: 1,
+    date1: "",
+    date2: "",
+    pic_url: []
+  })
 });
 
 // vue 规定所有的 prop 都遵循着单向绑定原则，直接修改 prop 时，Vue 会抛出警告。此处的写法仅仅是为了消除警告。
@@ -25,12 +35,21 @@ const props = withDefaults(defineProps<addFormProps>(), {
 // 但该写法仅适用于 props.formInline 是一个对象类型的情况，原始类型需抛出事件
 // 推荐阅读：https://cn.vuejs.org/guide/components/props.html#one-way-data-flow
 const newFormInline = ref(props.data);
+const creators = ref([]);
 
-const cities = ref([{ value: "北京", label: "北京" }]);
+const handleUploadSuccess = (response, file, fileList) => {
+  console.log(response, file, fileList);
+  // 处理上传成功的逻辑
+  // props_data.value.urlList.push(response.data);
+};
+
+
 onMounted(async () => {
   try {
-    const response = await axios.get("http://localhost:8001/getlist");
-    cities.value = response.data; // 假设返回的数据是一个城市数组
+    const rsp = await getCreator();
+    if (rsp) {
+      creators.value = rsp.data.content;
+    }
   } catch (error) {
     console.error("获取城市数据失败", error);
   }
@@ -53,10 +72,45 @@ onMounted(async () => {
       <el-input-number v-model="newFormInline.price" :precision='2' />
     </el-form-item>
     <el-form-item label="发行商">
-      <el-input-number v-model="newFormInline.creator" />
+      <el-select v-model="newFormInline.creator" placeholder="请选择发行商">
+        <el-option
+          v-for="item in creators"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        />
+      </el-select>
     </el-form-item>
-    <el-form-item label="是否甄选">
-      <e v-model="newFormInline.pickFlag" />
+    <el-form-item label="发售时间">
+      <el-col :span="11">
+        <el-date-picker
+          v-model="newFormInline.date1"
+          type="date"
+          placeholder="选择日期"
+          style="width: 100%"
+        />
+      </el-col>
+      <el-col :span="2" class="text-center">
+        <span class="text-gray-500">-</span>
+      </el-col>
+      <el-col :span="11">
+        <el-time-picker
+          v-model="newFormInline.date2"
+          placeholder="选择时间"
+          style="width: 100%"
+        />
+      </el-col>
     </el-form-item>
+    <el-upload
+      v-model:file-list="newFormInline.pic_url"
+      class="upload-demo"
+      method="post"
+      action="https://pay.zhongkexl.com/api/storage/upload"
+      :limit="1"
+      :on-success="handleUploadSuccess"
+    >
+      <el-button type="primary">点击上传</el-button>
+      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+    </el-upload>
   </el-form>
 </template>

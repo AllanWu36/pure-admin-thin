@@ -4,6 +4,7 @@ import { baseUrlApi } from "./utils";
 
 type creator_item = {
   /** 图片url */
+  id: number;
   name: string;
   createTime: string;
   lastModifyTime: string;

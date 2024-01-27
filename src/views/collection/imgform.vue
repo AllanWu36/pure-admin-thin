@@ -87,7 +87,7 @@ const change = (evt): void => {
     <div class="w-1/2">
       <!-- 图片预览对话框 -->
       <div v-for="(url, index) in props_data.urlList" :key="index">
-        <img :src="url.url" style="max-width: 100%; margin-bottom: 2px" />
+        <img :src="url.picLink" style="max-width: 100%; margin-bottom: 2px" />
       </div>
     </div>
     <div class="w-1/2">

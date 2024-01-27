@@ -24,8 +24,10 @@ export type collection_item = {
 // 这里定义返回值类型，使接口拥有良好的类型推导
 export type CommonResult = {
   /** 是否请求成功 */
-  status: number;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
 };
 
 // 这里定义返回值类型，使接口拥有良好的类型推导
@@ -156,10 +158,12 @@ export const scheduleCollection = (id: number, saleTime: dateType) => {
 
 // 取消发布藏品
 export const cancelPublishCollection = (id: number) => {
-  const data = {
-    collectionid: id
+  const params = {
+    id: id
   };
-  return http.request<CommonResult>("post", baseUrlApi("collection/cancel/"), {
-    data
-  });
+  return http.request<CommonResult>(
+    "get",
+    baseUrlApi("/collection/delCollection"),
+    { params }
+  );
 };

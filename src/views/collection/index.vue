@@ -25,7 +25,9 @@
         >
           修改图片
         </el-button>
-        <el-button link type="warning" size="small">删除</el-button>
+        <el-button link type="warning" size="small" @click="handleDelClick(row)"
+          >注销藏品
+        </el-button>
       </template>
     </pure-table>
     <dialog />
@@ -38,8 +40,13 @@ import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
 import addForm, { type addFormProps } from "./addForm.vue";
+import delForm from "./delForm.vue";
 import storyForm, { type storyFormProps } from "./imgform.vue";
-import { getCollections, updateCollection, updateCollectionStory} from "@/api/collection";
+import {
+  getCollections,
+  cancelPublishCollection,
+  updateCollectionStory
+} from "@/api/collection";
 function handleClick(row) {
   console.log(
     "%crow===>>>: ",
@@ -101,6 +108,27 @@ function handleClickUpdateStory(row) {
   });
 }
 
+// 注销藏品
+function handleDelClick(row) {
+  addDialog({
+    width: "50%",
+    title: "注销藏品",
+    contentRenderer: () => delForm,
+    closeCallBack: async ({ options, args }) => {
+      if (args?.command === "cancel") {
+        // 您点击了取消按钮
+      } else if (args?.command === "sure") {
+        const rep = await cancelPublishCollection(row.id);
+        if (rep.success === true) {
+          message(`藏品已经注销，用户无法再查找和购买`);
+          refreshTable();
+        }
+      } else {
+        // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
+      }
+    }
+  });
+}
 const columns: Array<TableColumns> = [
   {
     label: "名字",
@@ -143,6 +171,32 @@ const pagination = reactive({
   background: true,
   total: tableData.value.length
 });
+
+async function refreshTable() {
+  try {
+    loading.value = true;
+    const collections = await getCollections();
+    if (collections) {
+      console.log(collections);
+      tableData.value = collections.data.content;
+      tableData.value.forEach(item => {
+        if (item.pickFlag === false) {
+          item.pickFlag = "否";
+        } else if (item.pickFlag === true) {
+          item.pickFlag = "是";
+        }
+      });
+      pagination.pageSize = collections.data.pageSize;
+      pagination.currentPage = collections.data.pageNum;
+      pagination.total = tableData.value.length;
+    }
+    loading.value = false;
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    loading.value = false;
+  }
+}
+
 
 onMounted(async () => {
   try {
