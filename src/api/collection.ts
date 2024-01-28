@@ -61,7 +61,12 @@ export type CollectionsResult = {
 
 type module_collection = {
   name: string;
-  img: string;
+  cover: string;
+  price: number;
+  quantity: number;
+  creator: number;
+  saleTime: string;
+  creatorid: number;
 };
 
 type module_story = {
@@ -90,13 +95,22 @@ export const getCollectionStory = (id: string) => {
 };
 
 // 新增藏品
-export const addCollection = (collection: module_collection) => {
+export const addCollection = (collection: object) => {
   const data = {
-    ...collection
+    name: collection.name,
+    cover: collection.pic_id,
+    price: collection.price,
+    quantity: collection.quantity,
+    saleTime: collection.pub_datetime,
+    creatorId: collection.creator
   };
-  return http.request<CommonResult>("post", baseUrlApi("collection"), {
-    data
-  });
+  return http.request<CommonResult>(
+    "post",
+    baseUrlApi("collection/addCollection"),
+    {
+      data
+    }
+  );
 };
 
 // 修改藏品

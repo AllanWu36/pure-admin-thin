@@ -30,12 +30,14 @@ export type airdrops_result = {
 };
 
 export type result = {
-  status: internal;
-  statusText: string;
+  success: boolean;
+  code: number;
+  msg: string;
+  timestamp: number;
 };
 export type module_airdrop = {
-  name: string;
-  img: string;
+  collectionId: string;
+  quantity: number;
 };
 
 export const getAirdrops = () => {
@@ -54,7 +56,11 @@ export const addAirdrop = (airdrop: module_airdrop) => {
   const data = {
     ...airdrop
   };
-  return http.request<result>("post", baseUrlApi("airdrop/"), { data });
+  return http.request<result>(
+    "post",
+    baseUrlApi("exchangeCode/generateExchangeCode"),
+    { data }
+  );
 };
 
 export const delCreatorById = (id: string) => {

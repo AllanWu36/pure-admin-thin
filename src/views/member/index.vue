@@ -105,12 +105,14 @@ const pagination = reactive({
 onMounted(async () => {
   try {
     const members = await getMembers();
-    if (members) {
+    if (members.success === true) {
       console.log(members);
       tableData.value = members.data.content;
       pagination.pageSize = members.data.pageSize;
       pagination.currentPage = members.data.pageNum;
       pagination.total = members.data.total;
+    } else {
+      message(`${members.msg}`);
     }
     loading.value = false;
   } catch (error) {

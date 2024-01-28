@@ -2,7 +2,7 @@
   <div>
     <!-- <h1 style="text-align: center">按需引入示例</h1> -->
     <div class="px-2 py-1 text-right">
-      <el-button type="primary" plain @click="handleClickAddRole"
+      <el-button type="primary" plain @click="handleClickAddAirdrop"
         >添加兑换码+</el-button
       >
     </div>
@@ -33,9 +33,39 @@ import { ref, reactive, onMounted } from "vue";
 import type { TableColumns } from "@pureadmin/table";
 import { addDialog } from "@/components/ReDialog";
 import { message } from "@/utils/message";
-import { getCollections } from "@/api/collection";
 import delForm from "./deleteAirdrop.vue";
-import {getAirdrops, delCreatorById} from "@/api/airdrop";
+import addForm, { type addFormProps } from "./addAirdrop.vue";
+import { getAirdrops, addAirdrop, delCreatorById } from "@/api/airdrop";
+
+//增加兑换码
+function handleClickAddAirdrop() {
+  addDialog({
+    width: "70%",
+    title: "添加兑换码",
+    contentRenderer: () => addForm,
+    props: {
+      // 赋默认值
+      data: {}
+    },
+    closeCallBack: async ({ options, args }) => {
+      if (args?.command === "cancel") {
+        // 您点击了取消按钮
+        message(`您点击了取消按钮`);
+      } else if (args?.command == "sure") {
+        // 您点击了确认按钮
+        const { data } = options.props as addFormProps;
+        console.log(data);
+        const rsp = await addAirdrop(data);
+        if (rsp.success === true) {
+          message("添加成功");
+        } else {
+          message("添加失败，请联系管理员");
+        }
+      }
+    }
+  });
+}
+
 //删除兑换码
 function handleDeleteClick(row) {
   addDialog({
@@ -107,12 +137,14 @@ const pagination = reactive({
 onMounted(async () => {
   try {
     const airdrops = await getAirdrops();
-    if (airdrops) {
+    if (airdrops.success === true) {
       console.log(airdrops);
       tableData.value = airdrops.data.content;
       pagination.pageSize = airdrops.data.pageSize;
       pagination.currentPage = airdrops.data.pageNum;
       pagination.total = tableData.value.length;
+    } else {
+      message(`${airdrops.msg}`);
     }
     loading.value = false;
   } catch (error) {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, reactive } from "vue";
 import { getCreator } from "@/api/creator";
-
+import type { FormInstance, FormRules } from "element-plus";
 // 声明 props 类型
 export interface addFormProps {
   data: {
@@ -11,7 +11,10 @@ export interface addFormProps {
     creator: number;
     date1: string;
     date2: string;
+    pub_datetime: string;
     pic_url: Array<string>;
+    pic_id: string;
+    prev_img: string;
   };
 }
 
@@ -25,7 +28,10 @@ const props = withDefaults(defineProps<addFormProps>(), {
     creator: 1,
     date1: "",
     date2: "",
-    pic_url: []
+    pub_datetime: "",
+    pic_url: [],
+    pic_id: "",
+    prev_img: ""
   })
 });
 
@@ -40,21 +46,11 @@ const creators = ref([]);
 const handleUploadSuccess = (response, file, fileList) => {
   console.log(response, file, fileList);
   // 处理上传成功的逻辑
-  // props_data.value.urlList.push(response.data);
+  newFormInline.value.pic_url.push(response.data[0]);
+  newFormInline.value.pic_id = response.data[0];
+  newFormInline.value.prev_img =
+    "https://pay.zhongkexl.com/staticfiles/" + response.data[0];
 };
-
-function beforeUploadFile(file) {
-  this.fileData = {
-    uploadFileFileName: file.name,
-    uploadFileContentType: file.type
-  }
-  let promise = new Promise((resolve) => {
-    this.$nextTick(function () {
-      resolve(true);
-    });
-  });
-  return promise;
-}
 
 onMounted(async () => {
   try {
@@ -69,7 +65,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-form :model="newFormInline">
+  <el-form :model="newFormInline" >
     <el-form-item label="藏品名称">
       <el-input
         v-model="newFormInline.name"
@@ -81,7 +77,7 @@ onMounted(async () => {
       <el-input-number v-model="newFormInline.quantity" :min="1" :max="100" />
     </el-form-item>
     <el-form-item label="价格">
-      <el-input-number v-model="newFormInline.price" :precision='2' />
+      <el-input-number v-model="newFormInline.price" :precision="2" />
     </el-form-item>
     <el-form-item label="发行商">
       <el-select v-model="newFormInline.creator" placeholder="请选择发行商">
@@ -94,24 +90,12 @@ onMounted(async () => {
       </el-select>
     </el-form-item>
     <el-form-item label="发售时间">
-      <el-col :span="11">
-        <el-date-picker
-          v-model="newFormInline.date1"
-          type="date"
-          placeholder="选择日期"
-          style="width: 100%"
-        />
-      </el-col>
-      <el-col :span="2" class="text-center">
-        <span class="text-gray-500">-</span>
-      </el-col>
-      <el-col :span="11">
-        <el-time-picker
-          v-model="newFormInline.date2"
-          placeholder="选择时间"
-          style="width: 100%"
-        />
-      </el-col>
+      <el-date-picker
+        v-model="newFormInline.pub_datetime"
+        type="datetime"
+        value-format="YYYY-MM-DD HH:mm:ss"
+        placeholder="选择发售时间"
+      />
     </el-form-item>
     <el-upload
       v-model:file-list="newFormInline.pic_url"
@@ -123,7 +107,13 @@ onMounted(async () => {
       :on-success="handleUploadSuccess"
     >
       <el-button type="primary">点击上传</el-button>
-      <div slot="tip" class="el-upload__tip">上传藏品封面图，只能上传jpg/png文件，且不超过500kb</div>
+      <div slot="tip" class="el-upload__tip">
+        上传藏品封面图，只能上传jpg/png文件，且不超过500kb
+      </div>
     </el-upload>
   </el-form>
+  <img
+    :src="newFormInline.prev_img"
+    style="max-width: 100%; margin-bottom: 2px"
+  />
 </template>

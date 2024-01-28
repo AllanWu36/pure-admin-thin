@@ -44,6 +44,7 @@ import delForm from "./delForm.vue";
 import storyForm, { type storyFormProps } from "./imgform.vue";
 import {
   getCollections,
+  addCollection,
   cancelPublishCollection,
   updateCollectionStory
 } from "@/api/collection";
@@ -62,14 +63,19 @@ function handleClickAddCollection() {
     contentRenderer: () => addForm,
     props: {
       // 赋默认值
-      data: {
-        num: 0,
-        urlList: []
-      }
+      data: {}
     },
-    closeCallBack: ({ options, args }) => {
-      if (options === "confirm") {
-        message("success", "新增成功");
+    closeCallBack: async ({ options, args }) => {
+      if (args?.command == "sure") {
+        const { data } = options.props as addFormProps;
+        console.log(data);
+
+        const rep = await addCollection(data);
+        if (rep.success === true) {
+          message("success", "新增成功");
+        } else {
+          message("error", "新增失败");
+        }
       }
     }
   });
@@ -98,7 +104,7 @@ function handleClickUpdateStory(row) {
         message(`您点击了取消按钮，当前表单数据为 ${data.urlList},id为${row}`);
       } else if (args?.command === "sure") {
         const rep = await updateCollectionStory(row.id, data.urlList);
-        if (rep.status === 200) {
+        if (rep.success === 200) {
           message(`您点击了确定按钮，当前表单数据为 ${data.urlList}`);
         }
       } else {
@@ -200,19 +206,14 @@ async function refreshTable() {
 onMounted(async () => {
   try {
     const collections = await getCollections();
-    if (collections) {
+    if (collections.success === true) {
       console.log(collections);
       tableData.value = collections.data.content;
-      tableData.value.forEach(item => {
-        if (item.pickFlag === false) {
-          item.pickFlag = "否";
-        } else if (item.pickFlag === true) {
-          item.pickFlag = "是";
-        }
-      });
       pagination.pageSize = collections.data.pageSize;
       pagination.currentPage = collections.data.pageNum;
       pagination.total = tableData.value.length;
+    } else {
+      message(`${collections.msg}`);
     }
     loading.value = false;
   } catch (error) {
