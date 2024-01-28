@@ -1,6 +1,7 @@
 import { http } from "@/utils/http";
 import internal from "stream";
 import { baseUrlApi } from "./utils";
+import { stringify } from 'qs';
 
 type airdrop_item = {
   id: string;
@@ -53,13 +54,18 @@ export const getAirdrops = () => {
 };
 
 export const addAirdrop = (airdrop: module_airdrop) => {
-  const data = {
-    ...airdrop
+  const formattedParams = stringify(airdrop); // 格式化数据
+  const finalConfig = {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    data: formattedParams
   };
   return http.request<result>(
     "post",
     baseUrlApi("exchangeCode/generateExchangeCode"),
-    { data }
+    undefined,
+    finalConfig
   );
 };
 

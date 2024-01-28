@@ -65,7 +65,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-form :model="newFormInline" >
+  <el-form :model="newFormInline">
     <el-form-item label="藏品名称">
       <el-input
         v-model="newFormInline.name"
