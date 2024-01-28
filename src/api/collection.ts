@@ -76,7 +76,7 @@ export const getCollections = () => {
   };
   return http.request<CollectionsResult>(
     "get",
-    baseUrlApi("/collection/findCollectionByPage"),
+    baseUrlApi("collection/findCollectionByPage"),
     { params }
   );
 };

@@ -84,8 +84,8 @@ function handleClickUpdateStory(row) {
       // 赋默认值
       data: {
         id: row.id,
-        num: 0,
-        urlList: []
+        num: row.collectionStorys.length,
+        urlList: row.collectionStorys
       }
     },
     closeCallBack: async ({ options, args }) => {
@@ -196,7 +196,6 @@ async function refreshTable() {
     loading.value = false;
   }
 }
-
 
 onMounted(async () => {
   try {

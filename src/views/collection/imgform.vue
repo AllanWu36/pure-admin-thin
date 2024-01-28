@@ -36,14 +36,19 @@ const props = withDefaults(defineProps<storyFormProps>(), {
 // console.log(newUrlInline);
 const props_data = ref(props.data);
 onMounted(async () => {
-  try {
-    const images = await get_Imgs(props_data.value.id);
-    if (images) {
-      props_data.value.urlList = images.imgs;
-      console.log(props_data.value.urlList);
-    }
-  } catch (error) {
-    console.error("Error fetching images:", error);
+  // try {
+  //   const images = await get_Imgs(props_data.value.id);
+  //   if (images) {
+  //     props_data.value.urlList = images.imgs;
+  //     console.log(props_data.value.urlList);
+  //   }
+  // } catch (error) {
+  //   console.error("Error fetching images:", error);
+  // }
+
+  //把props_data.urlList中的name修改为picLink的最后部分
+  for (let i = 0; i < props_data.value.urlList.length; i++) {
+    props_data.value.urlList[i].name = props_data.value.urlList[i].picLink.split("/").pop();
   }
 });
 
@@ -127,7 +132,7 @@ const change = (evt): void => {
             @change="change"
           >
             <template #item="{ element, index }">
-              <div class="item-single">{{ index }}:{{ element.id }}</div>
+              <div class="item-single">{{ index }}:{{ element.picLink }}</div>
             </template>
           </draggable>
         </el-card>
