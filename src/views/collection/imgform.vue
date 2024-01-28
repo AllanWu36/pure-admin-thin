@@ -101,7 +101,8 @@ const change = (evt): void => {
         <el-upload
           v-model:file-list="props_data.urlList"
           class="upload-demo"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+          action="/admin-api/storage/upload"
+          name="file_data"
           multiple
           :limit="7"
           :on-exceed="handleExceed"

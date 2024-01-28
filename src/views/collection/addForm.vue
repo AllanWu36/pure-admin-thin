@@ -43,6 +43,18 @@ const handleUploadSuccess = (response, file, fileList) => {
   // props_data.value.urlList.push(response.data);
 };
 
+function beforeUploadFile(file) {
+  this.fileData = {
+    uploadFileFileName: file.name,
+    uploadFileContentType: file.type
+  }
+  let promise = new Promise((resolve) => {
+    this.$nextTick(function () {
+      resolve(true);
+    });
+  });
+  return promise;
+}
 
 onMounted(async () => {
   try {
@@ -105,12 +117,13 @@ onMounted(async () => {
       v-model:file-list="newFormInline.pic_url"
       class="upload-demo"
       method="post"
-      action="https://pay.zhongkexl.com/api/storage/upload"
+      action="/admin-api/storage/upload"
       :limit="1"
+      name="file_data"
       :on-success="handleUploadSuccess"
     >
       <el-button type="primary">点击上传</el-button>
-      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      <div slot="tip" class="el-upload__tip">上传藏品封面图，只能上传jpg/png文件，且不超过500kb</div>
     </el-upload>
   </el-form>
 </template>
