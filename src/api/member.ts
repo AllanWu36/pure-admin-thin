@@ -32,10 +32,10 @@ export type result = {
   statusText: string;
 };
 
-export const getMembers = () => {
+export const getMembers = (pageNum, pageSize) => {
   const params = {
-    pageNum: 1,
-    pageSize: 10
+    pageNum,
+    pageSize
   };
   return http.request<members_result>(
     "get",

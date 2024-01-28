@@ -12,6 +12,8 @@
       :data="tableData"
       :columns="columns"
       :pagination="pagination"
+      @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange"
     >
       <template #operation="{ row }">
         <el-button
@@ -20,7 +22,7 @@
           size="small"
           @click="handleDetailClick(row)"
         >
-          详情
+          删除
         </el-button>
         <el-button v-if="!row.blockChainAddr" link type="warning" size="small" >
           区块链注册
@@ -39,7 +41,8 @@ import { message } from "@/utils/message";
 import { getMembers } from "@/api/member";
 import editForm from "./editMemberForm.vue";
 import { pa } from "element-plus/es/locale";
-//删除兑换码
+
+
 function handleDetailClick(row) {
   addDialog({
     width: "70%",
@@ -57,6 +60,15 @@ function handleDetailClick(row) {
       }
     }
   });
+}
+function onSizeChange(val) {
+  pagination.pageSize = val;
+  console.log("onSizeChange", val);
+}
+
+async function onCurrentChange(val) {
+  loading.value = true;
+  await refreshTable(val);
 }
 
 const columns: Array<TableColumns> = [
@@ -96,15 +108,38 @@ const tableData = ref([]);
 
 const loading = ref(true);
 const pagination = reactive({
-  pageSize: 5,
+  pageSize: 10,
   currentPage: 1,
   background: true,
   total: tableData.value.length
 });
 
+async function refreshTable(val) {
+  try {
+    loading.value = true;
+    const rsp = await getMembers(val, pagination.pageSize);
+    if (rsp.success === true) {
+      console.log(rsp);
+      tableData.value = rsp.data.content;
+
+      pagination.pageSize = rsp.data.pageSize;
+      pagination.currentPage = rsp.data.pageNum;
+      pagination.total = rsp.data.total;
+    }
+    loading.value = false;
+  } catch (error) {
+    console.error("Error fetching images:", error);
+    loading.value = false;
+  }
+}
+
+
 onMounted(async () => {
   try {
-    const members = await getMembers();
+    const members = await getMembers(
+      pagination.currentPage,
+      pagination.pageSize
+    );
     if (members.success === true) {
       console.log(members);
       tableData.value = members.data.content;

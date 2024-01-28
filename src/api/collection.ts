@@ -74,10 +74,10 @@ type module_story = {
 };
 
 // 获取收藏列表
-export const getCollections = () => {
+export const getCollections = (currPage, pageSize) => {
   const params = {
-    pageNum: 1,
-    pageSize: 10
+    pageNum: currPage,
+    pageSize: pageSize
   };
   return http.request<CollectionsResult>(
     "get",

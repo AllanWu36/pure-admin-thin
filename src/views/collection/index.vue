@@ -12,6 +12,8 @@
       :data="tableData"
       :columns="columns"
       :pagination="pagination"
+      @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange"
     >
       <template #operation="{ row }">
         <el-button link type="primary" size="small" @click="handleClick(row)">
@@ -48,6 +50,7 @@ import {
   cancelPublishCollection,
   updateCollectionStory
 } from "@/api/collection";
+
 function handleClick(row) {
   console.log(
     "%crow===>>>: ",
@@ -55,6 +58,17 @@ function handleClick(row) {
     row
   );
 }
+
+function onSizeChange(val) {
+  pagination.pageSize = val;
+  console.log("onSizeChange", val);
+}
+
+async function onCurrentChange(val) {
+  loading.value = true;
+  await refreshTable(val);
+}
+
 //新增藏品
 function handleClickAddCollection() {
   addDialog({
@@ -127,7 +141,7 @@ function handleDelClick(row) {
         const rep = await cancelPublishCollection(row.id);
         if (rep.success === true) {
           message(`藏品已经注销，用户无法再查找和购买`);
-          refreshTable();
+          refreshTable(pagination.currentPage);
         }
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
@@ -172,16 +186,16 @@ const tableData = ref([]);
 
 const loading = ref(true);
 const pagination = reactive({
-  pageSize: 5,
+  pageSize: 10,
   currentPage: 1,
   background: true,
   total: tableData.value.length
 });
 
-async function refreshTable() {
+async function refreshTable(val) {
   try {
     loading.value = true;
-    const collections = await getCollections();
+    const collections = await getCollections(val, pagination.pageSize);
     if (collections) {
       console.log(collections);
       tableData.value = collections.data.content;
@@ -194,7 +208,7 @@ async function refreshTable() {
       });
       pagination.pageSize = collections.data.pageSize;
       pagination.currentPage = collections.data.pageNum;
-      pagination.total = tableData.value.length;
+      pagination.total = collections.data.total;
     }
     loading.value = false;
   } catch (error) {
@@ -205,7 +219,10 @@ async function refreshTable() {
 
 onMounted(async () => {
   try {
-    const collections = await getCollections();
+    const collections = await getCollections(
+      pagination.currentPage,
+      pagination.pageSize
+    );
     if (collections.success === true) {
       console.log(collections);
       tableData.value = collections.data.content;
