@@ -16,7 +16,7 @@ const chartData = [
     name: "注册人数",
     value: 4,
     percent: "+0%",
-    data: [4, 4, 4, 4, 4, 4, 4] // 平滑折线图数据
+    data: [4, 3, 4, 4, 4, 4, 4] // 平滑折线图数据
   },
   {
     icon: Question,
@@ -26,7 +26,7 @@ const chartData = [
     name: "藏品销售数",
     value: 26,
     percent: "+70%",
-    data: [0, 0, 1, 14, 18, 20, 26]
+    data: [1, 2, 1, 14, 18, 20, 26]
   },
   {
     icon: CheckLine,
