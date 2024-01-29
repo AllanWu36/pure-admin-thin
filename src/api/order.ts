@@ -33,10 +33,10 @@ export type result = {
   statusText: string;
 };
 
-export const getOrders = (params:any) => {
+export const getOrders = (params: any) => {
   return http.request<orders_result>(
     "get",
     baseUrlApi("payOrder/findPayOrderByPage"),
-    {params}
+    { params }
   );
 };

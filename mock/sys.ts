@@ -6,7 +6,7 @@ export default [
     // 获取用户列表
     url: "/sys_admins",
     method: "get",
-    response: ({ body }) => {
+    response: () => {
       return {
         status: 200,
         statusText: "OK",
@@ -20,12 +20,12 @@ export default [
             {
               id: "1747885806883700736",
               name: "admin",
-              lastest_login_time: "2024-01-18 14:00",
+              lastest_login_time: "2024-01-18 14:00"
             },
             {
               id: "1747885806883700736",
               name: "test",
-              lastest_login_time: "2024-01-26 17:23",
+              lastest_login_time: "2024-01-26 17:23"
             }
           ]
         }
@@ -36,7 +36,7 @@ export default [
     // 修改用户信息
     url: /\/sys_admin\/(\d+)/, // 使用正则表达式匹配 URL 和路径参数
     method: "post",
-    response: ({ body }) => {
+    response: () => {
       return {
         status: 200,
         statusText: "OK"

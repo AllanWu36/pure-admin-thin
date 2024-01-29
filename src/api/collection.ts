@@ -69,9 +69,9 @@ type module_collection = {
   creatorid: number;
 };
 
-type module_story = {
-  img: Array<img_item>;
-};
+// type module_story = {
+//   img: Array<img_item>;
+// };
 type Collection = {
   name: string;
   cover: string;
@@ -80,11 +80,11 @@ type Collection = {
   saleTime: string;
   creatorId: number;
   pic_id: number;
-  creator:string;
-  pub_datetime:string;
-}
+  creator: string;
+  pub_datetime: string;
+};
 // 获取收藏列表
-export const getCollections = (currPage:number = 0, pageSize:number) => {
+export const getCollections = (currPage = 0, pageSize: number) => {
   const params = {
     pageNum: currPage,
     pageSize: pageSize
