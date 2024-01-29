@@ -121,6 +121,10 @@ class PureHttp {
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
         const $config = response.config;
+        // code 999 代表账号在其他地方上线
+        if (response.data.code === 999) {
+          useUserStoreHook().logOut();
+        }
         // 关闭进度条动画
         NProgress.done();
         // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调

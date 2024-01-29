@@ -29,7 +29,7 @@ const collections = ref([]);
 
 onMounted(async () => {
   try {
-    const rsp = await getCollections();
+    const rsp = await getCollections(1, 10);
     if (rsp.success === true) {
       collections.value = rsp.data.content;
     }
@@ -55,6 +55,5 @@ onMounted(async () => {
     <el-form-item label="数量">
       <el-input-number v-model="newFormInline.quantity" :min="1" :max="100" />
     </el-form-item>
-
   </el-form>
 </template>

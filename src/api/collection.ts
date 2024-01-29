@@ -11,7 +11,7 @@ export type collection_item = {
   id: string;
   name: string;
   cover: string;
-  price: float;
+  price: number;
   quantity: number;
   stock: number;
   saleTime: string;
@@ -72,9 +72,19 @@ type module_collection = {
 type module_story = {
   img: Array<img_item>;
 };
-
+type Collection = {
+  name: string;
+  cover: string;
+  price: number;
+  quantity: number;
+  saleTime: string;
+  creatorId: number;
+  pic_id: number;
+  creator:string;
+  pub_datetime:string;
+}
 // 获取收藏列表
-export const getCollections = (currPage, pageSize) => {
+export const getCollections = (currPage:number = 0, pageSize:number) => {
   const params = {
     pageNum: currPage,
     pageSize: pageSize
@@ -95,7 +105,7 @@ export const getCollectionStory = (id: string) => {
 };
 
 // 新增藏品
-export const addCollection = (collection: object) => {
+export const addCollection = (collection: Collection) => {
   const data = {
     name: collection.name,
     cover: collection.pic_id,

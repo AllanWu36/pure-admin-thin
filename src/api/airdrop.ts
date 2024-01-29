@@ -1,7 +1,7 @@
 import { http } from "@/utils/http";
 import internal from "stream";
 import { baseUrlApi } from "./utils";
-import { stringify } from 'qs';
+import { stringify } from "qs";
 
 type airdrop_item = {
   id: string;
@@ -41,11 +41,11 @@ export type module_airdrop = {
   quantity: number;
 };
 
-export const getAirdrops = () => {
-  const params = {
-    pageNum: 1,
-    pageSize: 10
-  };
+export const getAirdrops = (params: any) => {
+  // const params = {
+  //   pageNum: 1,
+  //   pageSize: 10
+  // };
   return http.request<airdrops_result>(
     "get",
     baseUrlApi("exchangeCode/findExchangeCodeByPage"),

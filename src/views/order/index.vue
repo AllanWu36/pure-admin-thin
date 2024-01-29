@@ -6,20 +6,10 @@
         >添加兑换码+</el-button
       >
     </div> -->
-    <pure-table
-      border
-      :loading="loading"
-      :data="tableData"
-      :columns="columns"
-      :pagination="pagination"
-    >
+    <pure-table border :loading="loading" :data="tableData" :columns="columns" :pagination="pagination"
+      @page-size-change="onSizeChange" @page-current-change="onCurrentChange">
       <template #operation="{ row }">
-        <el-button
-          link
-          type="warning"
-          size="small"
-          @click="handleDeleteClick(row)"
-        >
+        <el-button link type="warning" size="small" @click="handleDeleteClick(row)">
           删除
         </el-button>
       </template>
@@ -96,15 +86,24 @@ const tableData = ref([]);
 
 const loading = ref(true);
 const pagination = reactive({
-  pageSize: 5,
+  pageSize: 10,
   currentPage: 1,
   background: true,
-  total: tableData.value.length
+  total: 0
 });
-
-onMounted(async () => {
+const onSizeChange = (val: number) => {
+  pagination.pageSize = val;
+  getTableData({ pageSize: pagination.pageSize, pageNum: pagination.currentPage })
+}
+const onCurrentChange = (val: number) => {
+  console.log(val);
+  pagination.currentPage = val;
+  getTableData({ pageSize: pagination.pageSize, pageNum: pagination.currentPage })
+}
+const getTableData = async (payload: any) => {
+  loading.value = true;
   try {
-    const orders = await getOrders();
+    const orders = await getOrders(payload);
     if (orders.success === true) {
       console.log(orders);
       tableData.value = orders.data.content;
@@ -118,5 +117,8 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching images:", error);
   }
+}
+onMounted(() => {
+  getTableData({ pageSize: pagination.pageSize, pageNum: pagination.currentPage })
 });
 </script>

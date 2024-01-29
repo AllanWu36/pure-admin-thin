@@ -12,6 +12,8 @@
       :data="tableData"
       :columns="columns"
       :pagination="pagination"
+      @page-size-change="onSizeChange"
+      @page-current-change="onCurrentChange"
     >
       <template #operation="{ row }">
         <el-button
@@ -37,6 +39,7 @@ import delForm from "./deleteAirdrop.vue";
 import addForm, { type addFormProps } from "./addAirdrop.vue";
 import { getAirdrops, addAirdrop, delCreatorById } from "@/api/airdrop";
 
+
 //增加兑换码
 function handleClickAddAirdrop() {
   addDialog({
@@ -58,6 +61,7 @@ function handleClickAddAirdrop() {
         const rsp = await addAirdrop(data);
         if (rsp.success === true) {
           message("添加成功");
+          getTable({pageSize:pagination.pageSize,pageNum:pagination.currentPage})
         } else {
           message("添加失败，请联系管理员");
         }
@@ -69,8 +73,8 @@ function handleClickAddAirdrop() {
 //删除兑换码
 function handleDeleteClick(row) {
   addDialog({
-    width: "70%",
-    title: "修改图片",
+    width: "350px",
+    title: "删除兑换码",
     contentRenderer: () => delForm,
 
     closeCallBack: ({ options, args }) => {
@@ -78,8 +82,8 @@ function handleDeleteClick(row) {
         // 您点击了取消按钮
         message(`您点击了取消按钮`);
       } else if (args?.command === "sure") {
-
-        message(`您点击了确定按钮，当前表单数据为 ${data.urlList}`);
+        const { data } = options.props as addFormProps;
+        message(`您点击了确定按钮，当前表单数据为 ${data}`);
       } else {
         // message(`您点击了右上角关闭按钮或者空白页，当前表单数据为 ${text}`);
       }
@@ -128,21 +132,30 @@ const tableData = ref([]);
 
 const loading = ref(true);
 const pagination = reactive({
-  pageSize: 5,
+  pageSize: 10,
   currentPage: 1,
   background: true,
-  total: tableData.value.length
+  total: 0
 });
-
-onMounted(async () => {
+const onSizeChange = (val:number)=>{
+  pagination.pageSize = val;
+  getTable({pageSize:pagination.pageSize,pageNum:pagination.currentPage})
+}
+const onCurrentChange = (val:number)=>{
+  console.log(val);
+  pagination.currentPage = val;
+  getTable({pageSize:pagination.pageSize,pageNum:pagination.currentPage})
+}
+const getTable = async (payload:any)=>{
+  loading.value = true;
   try {
-    const airdrops = await getAirdrops();
+    const airdrops = await getAirdrops(payload);
     if (airdrops.success === true) {
-      console.log(airdrops);
+      // console.log(airdrops);
       tableData.value = airdrops.data.content;
       pagination.pageSize = airdrops.data.pageSize;
       pagination.currentPage = airdrops.data.pageNum;
-      pagination.total = tableData.value.length;
+      pagination.total = airdrops.data.total;
     } else {
       message(`${airdrops.msg}`);
     }
@@ -150,5 +163,8 @@ onMounted(async () => {
   } catch (error) {
     console.error("Error fetching images:", error);
   }
+}
+onMounted(() => {
+  getTable({pageSize:pagination.pageSize,pageNum:pagination.currentPage})
 });
 </script>
