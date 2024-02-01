@@ -16,7 +16,7 @@ const chartData = [
     name: "注册人数",
     value: 4,
     percent: "+0%",
-    data: [4, 3, 4, 4, 4, 4, 4] // 平滑折线图数据
+    data: [2, 3, 4, 4, 4, 4, 4] // 平滑折线图数据
   },
   {
     icon: Question,
@@ -42,11 +42,11 @@ const chartData = [
     icon: Smile,
     bgColor: "#f6f4fe",
     color: "#7846e5",
-    duration: 100,
+    duration: 11,
     name: "用户满意度",
-    value: 100,
-    percent: "+100%",
-    data: [100]
+    value: 12,
+    percent: "+13%",
+    data: [74]
   }
 ];
 

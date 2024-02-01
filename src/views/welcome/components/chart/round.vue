@@ -1,9 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useDark, useECharts } from "@pureadmin/utils";
+import data from "@iconify-icons/ri/fullscreen-fill";
 
 const { isDark } = useDark();
-
+const props = defineProps({
+  data: {
+    type: Array,
+    required: true
+  },
+  text: {
+    type: String,
+    required: true
+  }
+});
 const theme = computed(() => (isDark.value ? "dark" : "light"));
 
 const chartRef = ref();
@@ -15,7 +25,7 @@ const { setOptions } = useECharts(chartRef, {
 setOptions({
   container: ".line-card",
   title: {
-    text: "100%",
+    text: props.text,
     left: "47%",
     top: "30%",
     textAlign: "center",
@@ -54,7 +64,7 @@ setOptions({
       backgroundStyle: {
         color: "#dfe7ef"
       },
-      data: [100],
+      data: props.data,
       coordinateSystem: "polar",
       color: "#7846e5",
       itemStyle: {

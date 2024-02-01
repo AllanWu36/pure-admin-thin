@@ -71,7 +71,12 @@ const { isDark } = useDark();
               :color="item.color"
               :data="item.data"
             />
-            <roundChart v-else class="!w-1/2" />
+            <roundChart
+              v-else
+              :data="item.data"
+              :text="item.data"
+              class="!w-1/2"
+            />
           </div>
         </el-card>
       </re-col>
