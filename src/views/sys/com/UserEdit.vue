@@ -21,65 +21,98 @@
           :label-width="formLabelWidth"
           prop="username"
         >
-          <el-input v-model="editUserData.username" autocomplete="off" />
+          <el-input
+            v-model="editUserData.username"
+            autocomplete="off"
+            disabled
+          />
+        </el-form-item>
+        <el-form-item label="昵称" :label-width="formLabelWidth" prop="nickname">
+          <el-input v-model="editUserData.nickname" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="头像" :label-width="formLabelWidth" prop="avatar">
+          <el-input
+            v-model="editUserData.avatar"
+            placeholder="请输入头像链接"
+            autocomplete="off"
+          />
         </el-form-item>
         <el-form-item
-          label="token数量"
+          label="简介"
           :label-width="formLabelWidth"
-          prop="total_token"
+          prop="description"
         >
-          <el-input v-model="editUserData.total_token" />
+          <el-input
+            v-model="editUserData.description"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入简介"
+          />
         </el-form-item>
-
-        <!-- <el-form-item
-          label="密码"
+        <el-form-item
+          label="新密码"
           :label-width="formLabelWidth"
           prop="password"
         >
-          <el-input v-model="editUserData.password" autocomplete="off" />
+          <el-input
+            v-model="editUserData.password"
+            type="password"
+            autocomplete="new-password"
+            show-password
+          />
         </el-form-item>
         <el-form-item
           label="确认密码"
           :label-width="formLabelWidth"
           prop="confirmPassword"
         >
-          <el-input v-model="editUserData.confirmPassword" autocomplete="off" />
-        </el-form-item>
-        -->
-        <el-form-item label="vip" :label-width="formLabelWidth">
-          <el-input v-model="editUserData.vip" prop="vip" />
-        </el-form-item>
-        <el-form-item label="昵称" :label-width="formLabelWidth">
           <el-input
-            v-model="editUserData.nickname"
-            autocomplete="off"
-            prop="nickname"
+            v-model="editUserData.confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            show-password
           />
         </el-form-item>
-        <!-- <el-form-item label="角色" :label-width="formLabelWidth" prop="roles">
-          <el-select v-model="editUserData.roles" placeholder="用户角色">
+        <el-form-item label="角色" :label-width="formLabelWidth" prop="roles">
+          <el-select
+            v-model="editUserData.roles"
+            placeholder="请选择用户角色"
+            style="width: 100%"
+          >
             <el-option
               v-for="item in roles"
               :key="item.id"
               :label="item.name"
               :value="item.id"
-              :disabled="item.disabled"
             />
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
 
-      <div slot="footer" style="text-align: right">
-        <el-button @click="close">取消</el-button>
-        <el-button @click="reset">重置</el-button>
-        <el-button type="primary" @click="handelConfirm">确定</el-button>
-      </div>
+      <template #footer>
+        <div style="text-align: right">
+          <el-button @click="close">取消</el-button>
+          <el-button @click="reset">重置</el-button>
+          <el-button type="primary" @click="handleConfirm">确定</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { http } from "@/utils/http/index.ts";
+
+const createDefaultForm = () => ({
+  username: "",
+  nickname: "",
+  avatar: "",
+  description: "",
+  roles: null,
+  password: "",
+  confirmPassword: ""
+});
+
 export default {
   name: "UserEdit",
   inheritAttrs: false,
@@ -87,50 +120,29 @@ export default {
   props: ["editRow"],
   data() {
     return {
-      editUserData: {
-        username: "",
-        total_token: "",
-        vip: "",
-        // password: "",
-        // confirmPassword: "",
-        nickname: "",
-        // roles: 1,
-        avatar: "",
-        description: ""
-      },
+      formLabelWidth: "120px",
+      editUserData: createDefaultForm(),
+      initialFormData: createDefaultForm(),
+      currentUserId: null,
       formRules: {
-        username: [
-          { required: true, message: "请输入名称", trigger: "change" },
-          { validator: this.validateUsername, trigger: "change" }
-        ]
-        // password: [
-        //   { required: true, message: "请输入密码", trigger: "change" }
-        // ],
-        // confirmPassword: [
-        //   { required: true, message: "请再次输入密码", trigger: "change" },
-        //   { validator: this.validateConfirmPassword, trigger: "change" }
-        // ],
-        // nickname: [{ required: true, message: "请输入昵称", trigger: "change" }]
+        nickname: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+        password: [{ validator: this.validatePassword, trigger: "blur" }],
+        confirmPassword: [
+          { validator: this.validateConfirmPassword, trigger: "blur" }
+        ],
+        roles: [{ required: true, message: "请选择角色", trigger: "change" }]
       },
-      roles: [
-        {
-          value: "admin",
-          label: "管理员"
-        },
-        {
-          value: "editor",
-          label: "编辑"
-        },
-        {
-          value: "guest",
-          label: "游客"
-        }
-      ]
+      roles: []
     };
   },
   computed: {
     baseUrl() {
-      return "/api/user/" + this.editRow.id;
+      const id =
+        this.currentUserId ??
+        (this.editRow && typeof this.editRow.id !== "undefined"
+          ? this.editRow.id
+          : "");
+      return id ? `/api/user/${id}` : "/api/user/";
     }
   },
   watch: {},
@@ -143,38 +155,65 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      console.log("editRow", this.editRow);
-      this.editUserData = { ...this.editRow };
-      delete this.editUserData.roles;
-      http.get("/api/role").then(res => {
-        console.log(res);
-        this.roles = res.data.items;
-      });
+      this.setFormData();
+      this.fetchRoles();
     },
     onClose() {},
     reset() {
-      this.$refs["editForm"].resetFields();
-      this.editUserData.pid = 0;
-      console.log("reset", this.editUserData);
+      this.editUserData = { ...this.initialFormData };
+      this.$nextTick(() => {
+        if (this.$refs.editForm) {
+          this.$refs.editForm.clearValidate();
+        }
+      });
     },
     close() {
       console.log("close");
       this.$emit("update:visible", false);
       // 也可以这样写，只要和父组件匹配即可，this.$emit("Uv", false);
     },
-    validateUsername(rule, value, callback) {
-      const emailRegex = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-
-      if (!value || value === "") {
+    fetchRoles() {
+      http.get("/api/role").then(res => {
+        this.roles = res.data.items || [];
+      });
+    },
+    setFormData() {
+      if (!this.editRow) {
+        this.editUserData = createDefaultForm();
+        this.initialFormData = createDefaultForm();
+        this.currentUserId = null;
+        return;
+      }
+      this.currentUserId = this.editRow.id || null;
+      const currentRoleId =
+        Array.isArray(this.editRow.roles) && this.editRow.roles.length
+          ? this.editRow.roles[0].id
+          : null;
+      const nextForm = {
+        username: this.editRow.username || "",
+        nickname: this.editRow.nickname || "",
+        avatar: this.editRow.avatar || "",
+        description: this.editRow.description || "",
+        roles: currentRoleId,
+        password: "",
+        confirmPassword: ""
+      };
+      this.editUserData = nextForm;
+      this.initialFormData = { ...nextForm };
+    },
+    validatePassword(rule, value, callback) {
+      if (!value) {
         callback();
-      } else if (!emailRegex.test(value)) {
-        callback(new Error("请输入有效的邮箱地址"));
+        return;
+      }
+      if (value.length < 6) {
+        callback(new Error("密码至少需要 6 位字符"));
       } else {
         callback();
       }
     },
     validateConfirmPassword(rule, value, callback) {
-      if (!value || value === "") {
+      if (!value) {
         callback();
       } else if (value !== this.editUserData.password) {
         callback(new Error("两次密码输入不一致"));
@@ -182,33 +221,53 @@ export default {
         callback();
       }
     },
-    handelConfirm() {
+    prepareSubmitPayload() {
+      const payload = {
+        nickname: this.editUserData.nickname,
+        roles: this.editUserData.roles,
+        avatar: this.editUserData.avatar,
+        description: this.editUserData.description
+      };
+      if (!payload.avatar) delete payload.avatar;
+      if (!payload.description) delete payload.description;
+      if (this.editUserData.password) {
+        payload.password = this.editUserData.password;
+      }
+      return payload;
+    },
+    handleConfirm() {
       console.log("editUserData", this.editUserData);
-      // 也可以这么写：this.$refs['addForm'].validate(valid => {
-      this.$refs.editForm.validate(valid => {
+      const formRef = this.$refs.editForm;
+      if (!formRef) return;
+      if (!this.currentUserId && !(this.editRow && this.editRow.id)) {
+        this.$message.error("未获取到用户ID，无法提交");
+        return;
+      }
+      formRef.validate(valid => {
         if (!valid) {
           return;
-        } else {
-          console.log("post submit!!!");
-          http
-            .post(this.baseUrl, { data: this.editUserData })
-            .then(res => {
-              console.log(res);
-              this.$message({
-                message: "操作成功",
-                type: "success"
-              });
-              this.reset();
-              this.$emit("refresh");
-            })
-            .catch(error => {
-              console.log(error.message);
-              this.$message.error({
-                message: error.message
-              });
-            });
         }
-        this.close();
+        const payload = this.prepareSubmitPayload();
+        http
+          .post(this.baseUrl, { data: payload })
+          .then(res => {
+            console.log(res);
+            this.$message({
+              message: "操作成功",
+              type: "success"
+            });
+            this.$emit("refresh");
+          })
+          .catch(error => {
+            console.log(error.message);
+            this.$message.error({
+              message: error.message
+            });
+          })
+          .finally(() => {
+            this.reset();
+            this.close();
+          });
       });
     }
   }

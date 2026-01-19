@@ -1,103 +1,125 @@
 <script setup lang="ts">
 import { PureTable } from "@pureadmin/table";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { ref, reactive, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { http } from "@/utils/http";
-import { object } from "vue-types";
 import UserAdd from "./com/UserAdd.vue";
 import UserEdit from "./com/UserEdit.vue";
 
-const tableData = ref([]);
-const roleOptions = ref([
-  {
-    label: "选项一",
-    value: 1
-  },
-  {
-    label: "选项二",
-    value: 2
-  }
-]);
+interface RoleItem {
+  id: number;
+  name: string;
+}
+
+interface UserTableItem {
+  id: number;
+  username: string;
+  nickname: string;
+  avatar?: string;
+  description?: string;
+  roles: RoleItem[];
+}
+
+interface UserListResponse {
+  code: number;
+  data: {
+    total: number;
+    items: UserTableItem[];
+  };
+  message?: string;
+}
+
+const tableData = ref<UserTableItem[]>([]);
+const total = ref(0);
+const tableLoading = ref(false);
 
 const dialogAddFormVisible = ref(false);
 const dialogEditFormVisible = ref(false);
-const dialogChangePWFormVisible = ref(false);
-const selectRow = ref(object);
-
-const formLabelWidth = "140px";
+const selectRow = ref<UserTableItem | null>(null);
 
 const columns = ref([
   {
-    label: "id",
-    prop: "id"
-  },
-  {
     label: "账户",
-    prop: "username"
+    prop: "username",
+    minWidth: "160"
   },
   {
     label: "昵称",
-    prop: "nickname"
+    prop: "nickname",
+    minWidth: "120"
   },
   {
-    label: "注册时间",
-    prop: "created"
+    label: "头像",
+    prop: "avatar",
+    slot: "avatar",
+    width: "120"
   },
   {
-    label: "类型",
-    prop: "vip"
+    label: "简介",
+    prop: "description",
+    slot: "description",
+    minWidth: "200"
+  },
+  {
+    label: "角色",
+    prop: "roles",
+    slot: "roles",
+    minWidth: "160"
   },
   {
     label: "操作",
     prop: "op",
-    slot: "operation"
+    slot: "operation",
+    width: "200"
   }
 ]);
-function handleClickDelete(row) {
-  const delData = {
-    id: row.id
-  };
-  ElMessageBox.confirm("Are you sure to close this dialog?", "Warning", {
-    confirmButtonText: "OK",
-    cancelButtonText: "Cancel",
-    type: "warning"
-  })
-    .then(() => {
-      return http
-        .request("delete", "/api/user/" + row.id, { data: delData })
-        .then(response => {
-          // 处理响应结果
-          console.log(response.code);
-          refreshTable();
-        })
-        .catch(error => {
-          // 处理错误
-          console.log(error.message);
-          ElMessage.error({
-            message: error.message
-          });
-        });
-    })
-    .catch(() => {
-      // catch error
-    });
+
+const getAvatarText = (row: UserTableItem) => {
+  return (row.nickname || row.username || "").slice(0, 1).toUpperCase();
+};
+
+const userApi = "/api/user";
+
+async function refreshTable() {
+  tableLoading.value = true;
+  try {
+    const { data } = await http.get<UserListResponse>(userApi);
+    const items = Array.isArray(data?.items) ? data.items : [];
+    tableData.value = items.map(item => ({
+      ...item,
+      roles: item.roles ?? []
+    }));
+    total.value = data?.total ?? items.length;
+  } catch (error: any) {
+    ElMessage.error(error?.message || "获取用户列表失败");
+  } finally {
+    tableLoading.value = false;
+  }
 }
 
-function handleClickEdit(row) {
+function handleClickEdit(row: UserTableItem) {
   selectRow.value = row;
   dialogEditFormVisible.value = true;
 }
 
-function handleClickChangePW(row) {
-  selectRow.value = row;
-  dialogChangePWFormVisible.value = true;
-}
-
-function refreshTable() {
-  http.get("/api/user").then(res => {
-    console.log(res);
-    tableData.value = res.data.items;
-  });
+function handleClickDelete(row: UserTableItem) {
+  ElMessageBox.confirm("确定要删除该用户吗？", "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  })
+    .then(async () => {
+      try {
+        await http.request("delete", `${userApi}/${row.id}`, {
+          data: { id: row.id }
+        });
+        ElMessage.success("删除成功");
+        refreshTable();
+      } catch (error: any) {
+        ElMessage.error(error?.message || "删除失败");
+      }
+    })
+    .catch(() => void 0);
 }
 
 defineOptions({
@@ -106,23 +128,54 @@ defineOptions({
 });
 
 onMounted(() => {
-  console.log("mounted");
-  http.get("/api/user").then(res => {
-    console.log(res);
-    tableData.value = res.data.items;
-  });
+  refreshTable();
 });
 </script>
 
 <template>
   <div>
-    <div class="px-2 py-1 text-right">
+    <div
+      class="px-2 py-1"
+      style="display: flex; align-items: center; justify-content: space-between"
+    >
+      <span style="font-size: 13px; color: #909399"
+        >共 {{ total }} 位用户</span
+      >
       <el-button type="primary" plain @click="dialogAddFormVisible = true"
         >添加用户+</el-button
       >
     </div>
 
-    <pure-table :data="tableData" :columns="columns">
+    <pure-table
+      :data="tableData"
+      :columns="columns"
+      row-key="id"
+      :loading="tableLoading"
+      table-layout="auto"
+    >
+      <template #avatar="{ row }">
+        <div style="display: flex; align-items: center; gap: 8px">
+          <el-avatar :size="40" :src="row.avatar">
+            {{ getAvatarText(row) }}
+          </el-avatar>
+        </div>
+      </template>
+      <template #description="{ row }">
+        <span>{{ row.description || "未填写" }}</span>
+      </template>
+      <template #roles="{ row }">
+        <template v-if="row.roles?.length">
+          <el-tag
+            v-for="role in row.roles"
+            :key="role.id"
+            size="small"
+            style="margin-right: 6px"
+          >
+            {{ role.name }}
+          </el-tag>
+        </template>
+        <span v-else style="color: #b1b3b8">暂无角色</span>
+      </template>
       <template #operation="{ row }">
         <el-button
           link
@@ -136,13 +189,6 @@ onMounted(() => {
           link
           type="primary"
           size="small"
-          @click="handleClickChangePW(row)"
-          >修改密码</el-button
-        >
-        <el-button
-          link
-          type="primary"
-          size="small"
           @click="handleClickEdit(row)"
           >编辑信息</el-button
         >
@@ -152,12 +198,6 @@ onMounted(() => {
     <user-add
       v-model="dialogAddFormVisible"
       @update:visible="dialogAddFormVisible = false"
-      @refresh="refreshTable"
-    />
-    <user-edit
-      v-model="dialogEditFormVisible"
-      :editRow="selectRow"
-      @update:visible="dialogEditFormVisible = false"
       @refresh="refreshTable"
     />
     <user-edit
