@@ -12,6 +12,7 @@ import type {
 import { stringify } from "qs";
 import { getToken, formatToken } from "@/utils/auth";
 import { useUserStoreHook } from "@/store/modules/user";
+import { message } from "@/utils/message";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
@@ -118,16 +119,22 @@ class PureHttp {
     instance.interceptors.response.use(
       (response: PureHttpResponse) => {
         const $config = response.config;
+        const data = response.data as { code?: number; message?: string; msg?: string };
         // 优先判断post/get等方法是否传入回调，否则执行初始化设置等回调
         if (typeof $config.beforeResponseCallback === "function") {
           $config.beforeResponseCallback(response);
-          return response.data;
+          return data;
         }
         if (PureHttp.initConfig.beforeResponseCallback) {
           PureHttp.initConfig.beforeResponseCallback(response);
-          return response.data;
+          return data;
         }
-        return response.data;
+        if (data && typeof data === "object" && "code" in data && data.code !== 200) {
+          message(data.message || data.msg || "请求失败", { type: "error" });
+          // 若返回 code 不为 200，也视为处理失败
+          return Promise.reject("请求失败");
+        }
+        return data;
       },
       (error: PureHttpError) => {
         const $error = error;

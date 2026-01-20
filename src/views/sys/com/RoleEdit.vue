@@ -46,13 +46,13 @@ export default {
   props: ["editRow"],
   data() {
     return {
-      baseUrl: "/api/role",
+      baseUrl: "/api/role/{pk}",
       editTableData: {
-        pid: 0,
         name: "",
-        remark: ""
+        remark: "",
+        menus: []
       },
-      rules: {
+      formRules: {
         name: [{ required: true, message: "请输入名称", trigger: "change" }],
         remark: [{ required: true, message: "请输入说明", trigger: "change" }]
       }
@@ -69,7 +69,11 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      this.editTableData = { ...this.editRow };
+      this.editTableData = {
+        name: this.editRow?.name || "",
+        remark: this.editRow?.remark || "",
+        menus: Array.isArray(this.editRow?.menus) ? this.editRow.menus : []
+      };
     },
     onClose() {},
     reset() {
@@ -89,8 +93,15 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
+          const payload = {
+            name: this.editTableData.name,
+            remark: this.editTableData.remark,
+            menus: this.editTableData.menus
+          };
           http
-            .post(this.baseUrl, this.tableData)
+            .post(this.baseUrl.replace("{pk}", this.editRow.id), {
+              data: payload
+            })
             .then(res => {
               console.log(res);
               this.$message({

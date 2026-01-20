@@ -203,18 +203,28 @@ export default {
     },
     validatePassword(rule, value, callback) {
       if (!value) {
+        if (this.editUserData.confirmPassword && this.$refs.editForm) {
+          this.$refs.editForm.validateField("confirmPassword");
+        }
         callback();
         return;
       }
       if (value.length < 6) {
         callback(new Error("密码至少需要 6 位字符"));
       } else {
+        if (this.$refs.editForm) {
+          this.$refs.editForm.validateField("confirmPassword");
+        }
         callback();
       }
     },
     validateConfirmPassword(rule, value, callback) {
-      if (!value) {
+      if (!this.editUserData.password && !value) {
         callback();
+      } else if (!this.editUserData.password) {
+        callback(new Error("请先输入新密码"));
+      } else if (!value) {
+        callback(new Error("请再次输入新密码"));
       } else if (value !== this.editUserData.password) {
         callback(new Error("两次密码输入不一致"));
       } else {

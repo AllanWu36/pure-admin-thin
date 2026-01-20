@@ -35,3 +35,8 @@
 .html-weakness {
   filter: invert(80%);
 }
+
+/* 隐藏顶栏通知入口 */
+#header-notice {
+  display: none;
+}
