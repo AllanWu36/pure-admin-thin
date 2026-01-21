@@ -147,8 +147,42 @@ export default {
       }
       return ids;
     },
+    buildParentMap(nodes, map = {}) {
+      nodes.forEach(node => {
+        if (node && node.id !== undefined) {
+          map[node.id] = node.pid;
+        }
+        if (node && node.children && node.children.length) {
+          this.buildParentMap(node.children, map);
+        }
+      });
+      return map;
+    },
+    getMissingParentIds(selectedIds) {
+      if (!Array.isArray(selectedIds) || selectedIds.length === 0) {
+        return [];
+      }
+      const parentMap = this.buildParentMap(this.privilege);
+      const selectedSet = new Set(selectedIds);
+      const missing = new Set();
+      selectedIds.forEach(id => {
+        let pid = parentMap[id];
+        while (pid) {
+          if (!selectedSet.has(pid)) {
+            missing.add(pid);
+          }
+          pid = parentMap[pid];
+        }
+      });
+      return Array.from(missing);
+    },
 
     handelConfirm() {
+      const missingParentIds = this.getMissingParentIds(this.selectData.menus);
+      if (missingParentIds.length) {
+        this.$message.error("存在未选择的父级菜单，请补齐父级后再提交");
+        return;
+      }
       this.selectData.rid = this.editRow.id;
       console.log("selectData", this.selectData);
       // 也可以这么写：this.$refs['addForm'].validate(valid => {

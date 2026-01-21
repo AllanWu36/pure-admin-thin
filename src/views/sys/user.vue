@@ -32,6 +32,9 @@ interface UserListResponse {
 const tableData = ref<UserTableItem[]>([]);
 const total = ref(0);
 const tableLoading = ref(false);
+const currentPage = ref(1);
+const pageSize = ref(10);
+const pageSizes = [10, 20, 50, 100];
 
 const dialogAddFormVisible = ref(false);
 const dialogEditFormVisible = ref(false);
@@ -83,7 +86,9 @@ const userApi = "/api/user";
 async function refreshTable() {
   tableLoading.value = true;
   try {
-    const { data } = await http.get<UserListResponse>(userApi);
+    const { data } = await http.get<UserListResponse>(userApi, {
+      params: { offset: currentPage.value, limit: pageSize.value }
+    });
     const items = Array.isArray(data?.items) ? data.items : [];
     tableData.value = items.map(item => ({
       ...item,
@@ -120,6 +125,17 @@ function handleClickDelete(row: UserTableItem) {
       }
     })
     .catch(() => void 0);
+}
+
+function handleSizeChange(size: number) {
+  pageSize.value = size;
+  currentPage.value = 1;
+  refreshTable();
+}
+
+function handleCurrentChange(page: number) {
+  currentPage.value = page;
+  refreshTable();
 }
 
 defineOptions({
@@ -194,6 +210,18 @@ onMounted(() => {
         >
       </template>
     </pure-table>
+
+    <div class="mt-4 flex justify-end">
+      <el-pagination
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :page-sizes="pageSizes"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
 
     <user-add
       v-model="dialogAddFormVisible"
