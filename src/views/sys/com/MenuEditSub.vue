@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { updateMenu } from "@/api/menu";
 export default {
   name: "MenuEditSub",
   inheritAttrs: false,
@@ -133,9 +133,6 @@ export default {
     };
   },
   computed: {
-    baseUrl() {
-      return "/api/menu/" + this.editRow.id;
-    },
     formRules() {
       if (this.editTableData.type == "1") {
         return {
@@ -206,8 +203,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!", this.editTableData);
-          http
-            .post(this.baseUrl, { data: this.editTableData })
+          updateMenu(this.editRow.id, this.editTableData)
             .then(res => {
               console.log(res);
               this.$message({

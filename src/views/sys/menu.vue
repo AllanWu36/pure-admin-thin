@@ -2,7 +2,7 @@
 import { PureTable } from "@pureadmin/table";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, reactive, onMounted, computed } from "vue";
-import { http } from "@/utils/http";
+import { deleteMenu, getMenuList } from "@/api/menu";
 import { func, object } from "vue-types";
 import MenuEditSub from "./com/MenuEditSub.vue";
 import MenuAddSub2 from "./com/MenuAddSub2.vue";
@@ -94,7 +94,7 @@ function handleClickAddRoot() {
   dialogAddrootVisible.value = true;
 }
 function refreshTable() {
-  http.get(baseUrl.value).then(res => {
+  getMenuList().then(res => {
     console.log(res);
     tableData.value = res.data;
   });
@@ -110,8 +110,7 @@ function handleClickDelete(row) {
     type: "warning"
   })
     .then(() => {
-      return http
-        .request("delete", "/api/menu/{}".replace("{}", row.id))
+      return deleteMenu(row.id)
         .then(response => {
           // 处理响应结果
           console.log(response.code);
@@ -138,7 +137,7 @@ defineOptions({
 
 onMounted(() => {
   console.log("mounted");
-  http.get(baseUrl.value).then(res => {
+  getMenuList().then(res => {
     console.log(res);
     tableData.value = res.data;
   });

@@ -67,7 +67,8 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { createUser } from "@/api/user";
+import { getRoleList } from "@/api/role";
 export default {
   name: "UserAdd",
   inheritAttrs: false,
@@ -125,7 +126,7 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      http.get("/api/role").then(res => {
+      getRoleList().then(res => {
         console.log(res);
         this.roles = res.data.items;
       });
@@ -169,8 +170,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
-          http
-            .post(this.baseUrl, { data: this.addTableData })
+          createUser(this.addTableData)
             .then(res => {
               console.log(res);
               this.$message({

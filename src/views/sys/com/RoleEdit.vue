@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { updateRole } from "@/api/role";
 export default {
   name: "RoleAdd",
   inheritAttrs: false,
@@ -46,13 +46,12 @@ export default {
   props: ["editRow"],
   data() {
     return {
-      baseUrl: "/api/role/{pk}",
       editTableData: {
+        pid: 0,
         name: "",
-        remark: "",
-        menus: []
+        remark: ""
       },
-      formRules: {
+      rules: {
         name: [{ required: true, message: "请输入名称", trigger: "change" }],
         remark: [{ required: true, message: "请输入说明", trigger: "change" }]
       }
@@ -69,11 +68,7 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      this.editTableData = {
-        name: this.editRow?.name || "",
-        remark: this.editRow?.remark || "",
-        menus: Array.isArray(this.editRow?.menus) ? this.editRow.menus : []
-      };
+      this.editTableData = { ...this.editRow };
     },
     onClose() {},
     reset() {
@@ -93,15 +88,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
-          const payload = {
-            name: this.editTableData.name,
-            remark: this.editTableData.remark,
-            menus: this.editTableData.menus
-          };
-          http
-            .post(this.baseUrl.replace("{pk}", this.editRow.id), {
-              data: payload
-            })
+          updateRole(this.editRow.id, this.editTableData)
             .then(res => {
               console.log(res);
               this.$message({

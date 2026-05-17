@@ -47,3 +47,26 @@ export const refreshTokenApi = (data?: object) => {
     data
   });
 };
+
+/** 获取用户列表 */
+export const getUserList = () => {
+  return http.request<{ success: boolean; data: { items: Array<any> } }>(
+    "get",
+    baseUrlApi("user")
+  );
+};
+
+/** 删除用户 */
+export const deleteUser = (id: number) => {
+  return http.request("delete", baseUrlApi(`user/${id}`), { data: { id } });
+};
+
+/** 创建用户 */
+export const createUser = (data: object) => {
+  return http.request("post", baseUrlApi("user"), { data });
+};
+
+/** 更新用户 */
+export const updateUser = (id: number, data: object) => {
+  return http.request("post", baseUrlApi(`user/${id}`), { data });
+};

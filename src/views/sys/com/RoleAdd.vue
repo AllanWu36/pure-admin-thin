@@ -54,14 +54,14 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { createRole } from "@/api/role";
+import { getMenuList } from "@/api/menu";
 export default {
   name: "RoleAdd",
   inheritAttrs: false,
   components: {},
   data() {
     return {
-      baseUrl: "/api/role",
       addTableData: {
         name: "",
         remark: "",
@@ -90,8 +90,7 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      const dataUrl = "/api/menu";
-      http.get(dataUrl).then(res => {
+      getMenuList().then(res => {
         console.log(res);
         // this.selectData.value = res.data;
         this.privilege = this.processMenuData(res.data);
@@ -179,8 +178,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
-          http
-            .post(this.baseUrl, { data: this.addTableData })
+          createRole(this.addTableData)
             .then(res => {
               console.log(res);
               this.$message({

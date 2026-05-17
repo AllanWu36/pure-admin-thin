@@ -49,7 +49,8 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { getRoleMenus, updateRoleMenus } from "@/api/role";
+import { getMenuList } from "@/api/menu";
 export default {
   name: "RoleAdd",
   inheritAttrs: false,
@@ -57,7 +58,6 @@ export default {
   props: ["editRow"],
   data() {
     return {
-      baseUrl: "/api/role/{rid}/menu",
       selectData: {
         rid: 0,
         menus: []
@@ -85,15 +85,13 @@ export default {
   methods: {
     onOpen() {
       console.log("open");
-      const formatUrl = this.baseUrl.replace("{rid}", this.editRow.id);
-      http.get(formatUrl).then(res => {
+      getRoleMenus(this.editRow.id).then(res => {
         console.log(res);
         this.selectData.menus = this.extractIds(res.data);
         console.log(this.selectData.menus);
       });
 
-      const dataUrl = "/api/menu";
-      http.get(dataUrl).then(res => {
+      getMenuList().then(res => {
         console.log(res);
         // this.selectData.value = res.data;
         this.privilege = this.processMenuData(res.data);
@@ -192,10 +190,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
-          http
-            .post(this.baseUrl.replace("{rid}", this.editRow.id), {
-              data: this.selectData
-            })
+          updateRoleMenus(this.editRow.id, this.selectData.menus)
             .then(res => {
               console.log(res);
               this.$message({

@@ -2,15 +2,13 @@
 import { PureTable } from "@pureadmin/table";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, reactive, onMounted, computed } from "vue";
-import { http } from "@/utils/http";
+import { deleteRole, getRoleList } from "@/api/role";
 import { func, object } from "vue-types";
 import RoleAdd from "./com/RoleAdd.vue";
 import RoleEdit from "./com/RoleEdit.vue";
 import RolePrivilege from "./com/RolePrivilege.vue";
 
 const tableData = ref([]);
-const baseUrl = ref("/api/role");
-const deleteBaseUrl = ref("/api/role/{rid}");
 const selectRow = ref(object);
 const dialogAddFormVisible = ref(false);
 const dialogEditFormVisible = ref(false);
@@ -54,7 +52,7 @@ function handleClickPrivilegeRole(row) {
 }
 
 function refreshTable() {
-  http.get(baseUrl.value).then(res => {
+  getRoleList().then(res => {
     console.log(res);
     tableData.value = res.data.items;
   });
@@ -70,8 +68,7 @@ function handleClickDelete(row) {
     type: "warning"
   })
     .then(() => {
-      return http
-        .request("delete", "/api/role/{}".replace("{}", row.id))
+      return deleteRole(row.id)
         .then(response => {
           // 处理响应结果
           console.log(response.code);
@@ -97,7 +94,7 @@ defineOptions({
 
 onMounted(() => {
   console.log("mounted");
-  http.get(baseUrl.value).then(res => {
+  getRoleList().then(res => {
     console.log(res);
     tableData.value = res.data.items;
   });

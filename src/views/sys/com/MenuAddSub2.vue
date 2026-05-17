@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { createMenu } from "@/api/menu";
 export default {
   name: "MenuAddSub2",
   inheritAttrs: false,
@@ -114,7 +114,6 @@ export default {
   props: ["editRow"],
   data() {
     return {
-      baseUrl: "/api/menu",
       addTableData: {
         pid: "",
         type: "",
@@ -214,8 +213,7 @@ export default {
           return;
         } else {
           console.log("post submit!!!");
-          http
-            .post(this.baseUrl, { data: this.addTableData })
+          createMenu(this.addTableData)
             .then(res => {
               console.log(res);
               this.$message({
