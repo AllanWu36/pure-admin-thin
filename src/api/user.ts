@@ -49,10 +49,11 @@ export const refreshTokenApi = (data?: object) => {
 };
 
 /** 获取用户列表 */
-export const getUserList = () => {
-  return http.request<{ success: boolean; data: { items: Array<any> } }>(
+export const getUserList = (offset?: number, limit?: number) => {
+  return http.request<{ success: boolean; data: { items: Array<any>; total: number } }>(
     "get",
-    baseUrlApi("user")
+    baseUrlApi("user"),
+    { params: { offset, limit } }
   );
 };
 
@@ -69,4 +70,9 @@ export const createUser = (data: object) => {
 /** 更新用户 */
 export const updateUser = (id: number, data: object) => {
   return http.request("post", baseUrlApi(`user/${id}`), { data });
+};
+
+/** 获取角色列表 */
+export const getRoleList = () => {
+  return http.request("get", baseUrlApi("role"));
 };

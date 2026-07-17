@@ -101,7 +101,7 @@
 </template>
 
 <script>
-import { http } from "@/utils/http/index.ts";
+import { updateUser, getRoleList } from "@/api/user";
 
 const createDefaultForm = () => ({
   username: "",
@@ -173,7 +173,7 @@ export default {
       // 也可以这样写，只要和父组件匹配即可，this.$emit("Uv", false);
     },
     fetchRoles() {
-      http.get("/api/role").then(res => {
+      getRoleList().then(res => {
         this.roles = res.data.items || [];
       });
     },
@@ -258,8 +258,7 @@ export default {
           return;
         }
         const payload = this.prepareSubmitPayload();
-        http
-          .post(this.baseUrl, { data: payload })
+        updateUser(this.editRow.id, payload)
           .then(res => {
             console.log(res);
             this.$message({

@@ -2,7 +2,7 @@
 import { PureTable } from "@pureadmin/table";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { ref, onMounted } from "vue";
-import { http } from "@/utils/http";
+import { getUserList, deleteUser } from "@/api/user";
 import UserAdd from "./com/UserAdd.vue";
 import UserEdit from "./com/UserEdit.vue";
 
@@ -18,15 +18,6 @@ interface UserTableItem {
   avatar?: string;
   description?: string;
   roles: RoleItem[];
-}
-
-interface UserListResponse {
-  code: number;
-  data: {
-    total: number;
-    items: UserTableItem[];
-  };
-  message?: string;
 }
 
 const tableData = ref<UserTableItem[]>([]);
@@ -81,14 +72,10 @@ const getAvatarText = (row: UserTableItem) => {
   return (row.nickname || row.username || "").slice(0, 1).toUpperCase();
 };
 
-const userApi = "/api/user";
-
 async function refreshTable() {
   tableLoading.value = true;
   try {
-    const { data } = await http.get<UserListResponse>(userApi, {
-      params: { offset: currentPage.value, limit: pageSize.value }
-    });
+    const { data } = await getUserList(currentPage.value, pageSize.value);
     const items = Array.isArray(data?.items) ? data.items : [];
     tableData.value = items.map(item => ({
       ...item,
@@ -115,9 +102,7 @@ function handleClickDelete(row: UserTableItem) {
   })
     .then(async () => {
       try {
-        await http.request("delete", `${userApi}/${row.id}`, {
-          data: { id: row.id }
-        });
+        await deleteUser(row.id);
         ElMessage.success("删除成功");
         refreshTable();
       } catch (error: any) {
@@ -154,9 +139,7 @@ onMounted(() => {
       class="px-2 py-1"
       style="display: flex; align-items: center; justify-content: space-between"
     >
-      <span style="font-size: 13px; color: #909399"
-        >共 {{ total }} 位用户</span
-      >
+      <span style="font-size: 13px; color: #909399">共 {{ total }} 位用户</span>
       <el-button type="primary" plain @click="dialogAddFormVisible = true"
         >添加用户+</el-button
       >
